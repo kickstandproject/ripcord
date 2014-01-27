@@ -1,0 +1,9 @@
+include AUTHORS
+include LICENSE
+include README.rst
+include ChangeLog
+include tox.ini
+include ripcord/versioninfo
+recursive-include doc *
+recursive-include tools *
+recursive-include ripcord *.cfg, *.ini

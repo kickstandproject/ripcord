@@ -1,0 +1,15 @@
+*.egg
+*.egg-info
+*.pyc
+.coverage
+.testrepository/*
+.tox
+.venv
+AUTHORS
+build/*
+ChangeLog
+cover/*
+dist/*
+doc/build/*
+etc/ripcord/ripcord.conf
+ripcord/ripcord.sqlite
