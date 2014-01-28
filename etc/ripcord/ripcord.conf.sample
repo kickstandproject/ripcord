@@ -17,7 +17,7 @@
 #bind_host=0.0.0.0
 
 # The port to bind to (integer value)
-#bind_port=9859
+#bind_port=9869
 
 
 #
