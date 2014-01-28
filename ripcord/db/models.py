@@ -16,8 +16,12 @@
 
 import json
 
+from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.types import TypeDecorator, VARCHAR
+from sqlalchemy import Integer
+from sqlalchemy import String
+from sqlalchemy.types import TypeDecorator
+from sqlalchemy.types import VARCHAR
 
 from ripcord.openstack.common.db.sqlalchemy import models
 
@@ -44,3 +48,18 @@ class RipcordBase(models.TimestampMixin, models.ModelBase):
 
 
 Base = declarative_base(cls=RipcordBase)
+
+
+class Subscriber(Base):
+    __tablename__ = 'subscriber'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    domain = Column(String(64), nullable=False, default='')
+    email_address = Column(String(64), nullable=False, default='')
+    ha1 = Column(String(64), nullable=False, default='')
+    ha1b = Column(String(64), nullable=False, default='')
+    password = Column(String(25), nullable=False, default='')
+    project_id = Column(String(255))
+    rpid = Column(String(64))
+    user_id = Column(String(255))
+    username = Column(String(64), nullable=False, default='')
+    uuid = Column(String(255), unique=True)

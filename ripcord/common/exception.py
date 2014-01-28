@@ -87,3 +87,7 @@ class RipcordException(Exception):
 class NotFound(RipcordException):
     message = 'Resource could not be found'
     code = 404
+
+
+class SubscriberNotFound(NotFound):
+    message = 'Subscriber %(uuid)s could not be found'

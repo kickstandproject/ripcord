@@ -14,8 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ripcord.api.controllers.v1 import subscriber
+from ripcord.db import migration
+from ripcord import test
 
 
-class Controller(object):
-    subscribers = subscriber.SubscribersController()
+class TestCase(test.TestCase):
+    def setUp(self):
+        super(TestCase, self).setUp()
+
+    def test_sync_and_version(self):
+        migration.db_sync()
+        v = migration.db_version()
+        self.assertTrue(v > migration.INIT_VERSION)

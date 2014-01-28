@@ -14,8 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ripcord.api.controllers.v1 import subscriber
 
+def get_db_subscriber(**kw):
+    json = {
+        'username': kw.get('username', 'alice'),
+        'domain': kw.get('domain', 'example.org'),
+        'password': kw.get('password', 'foobar'),
+    }
 
-class Controller(object):
-    subscribers = subscriber.SubscribersController()
+    return json

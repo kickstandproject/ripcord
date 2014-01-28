@@ -1,6 +1,14 @@
 [DEFAULT]
 
 #
+# Options defined in ripcord.test
+#
+
+# Filename of clean sqlite db (string value)
+#sqlite_clean_db=clean.sqlite
+
+
+#
 # Options defined in ripcord.api.app
 #
 

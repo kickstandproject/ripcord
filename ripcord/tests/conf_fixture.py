@@ -14,8 +14,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ripcord.api.controllers.v1 import subscriber
+import fixtures
+
+from oslo.config import cfg
+
+from ripcord.common import config
+
+CONF = cfg.CONF
 
 
-class Controller(object):
-    subscribers = subscriber.SubscribersController()
+class ConfFixture(fixtures.Fixture):
+    """Fixture to manage global conf settings."""
+
+    def __init__(self, conf):
+        self.conf = conf
+
+    def setUp(self):
+        super(ConfFixture, self).setUp()
+
+        self.conf.set_default('connection', "sqlite://", group='database')
+        self.conf.set_default('sqlite_synchronous', False)
+        self.conf.set_default('verbose', True)
+        config.parse_args([], default_config_files=[])
+        self.addCleanup(self.conf.reset)

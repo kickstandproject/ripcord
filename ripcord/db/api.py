@@ -17,9 +17,16 @@
 
 """SQLAlchemy storage backend."""
 
+import hashlib
+
+from sqlalchemy.orm import exc
+
+from ripcord.common import exception
+from ripcord.db import models
 from ripcord.openstack.common.db import api
 from ripcord.openstack.common.db.sqlalchemy import session as db_session
 from ripcord.openstack.common import log as logging
+from ripcord.openstack.common import uuidutils
 
 LOG = logging.getLogger(__name__)
 
@@ -54,3 +61,73 @@ class Connection(object):
 
     def __init__(self):
         pass
+
+    def create_subscriber(self, values):
+        """Create a new subscriber."""
+
+        values['ha1'] = hashlib.md5(
+            '%s:%s:%s' % (
+                values['username'], values['domain'],
+                values['password'])).hexdigest()
+        values['ha1b'] = hashlib.md5(
+            '%s@%s:%s:%s' % (
+                values['username'], values['domain'], values['domain'],
+                values['password'])).hexdigest()
+        values['uuid'] = uuidutils.generate_uuid()
+
+        res = self._create_model(model=models.Subscriber(), values=values)
+
+        return res
+
+    def delete_subscriber(self, uuid):
+        """Delete a subscriber."""
+        res = self._delete_model(model=models.Subscriber, uuid=uuid)
+
+        if res != 1:
+            raise exception.SubscriberNotFound(uuid=uuid)
+
+    def get_subscriber(self, uuid):
+        """Retrieve information about the given subscriber."""
+        try:
+            res = self._get_model(model=models.Subscriber, uuid=uuid)
+        except exc.NoResultFound:
+            raise exception.SubscriberNotFound(uuid=uuid)
+
+        return res
+
+    def list_subscribers(self):
+        """Retrieve a list of subscribers."""
+        res = self._list_model(model=models.Subscriber)
+
+        return res
+
+    def _create_model(self, model, values):
+        """Create a new model."""
+        model.update(values)
+        model.save()
+
+        return model
+
+    def _delete_model(self, model, **kwargs):
+        session = get_session()
+        with session.begin():
+            query = model_query(
+                model, session=session
+            ).filter_by(**kwargs)
+
+            count = query.delete()
+
+            return count
+
+    def _get_model(self, model, **kwargs):
+        """Retrieve information about the given model."""
+        query = model_query(model).filter_by(**kwargs)
+        res = query.one()
+
+        return res
+
+    def _list_model(self, model, **kwargs):
+        """Retrieve a list of the given model."""
+        query = model_query(model).filter_by(**kwargs)
+
+        return query.all()

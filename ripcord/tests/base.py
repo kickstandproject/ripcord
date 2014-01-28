@@ -14,8 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ripcord.api.controllers.v1 import subscriber
+from ripcord import test
 
 
-class Controller(object):
-    subscribers = subscriber.SubscribersController()
+class TestCase(test.TestCase):
+
+    def setUp(self):
+        super(TestCase, self).setUp()
+
+    def _validate_db_model(self, original, result):
+        ignored_keys = [
+            'created_at',
+            'updated_at',
+        ]
+        self._assertEqualObjects(original, result, ignored_keys)
