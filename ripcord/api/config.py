@@ -43,5 +43,5 @@ app = {
     'modules': ['ripcord.api'],
     'static_root': '%(confdir)s/public',
     'template_path': '%(confdir)s/ripcord/api/templates',
-    'enable_acl': False,
+    'enable_acl': True,
 }
