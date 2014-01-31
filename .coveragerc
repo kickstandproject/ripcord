@@ -1,0 +1,7 @@
+[run]
+branch = True
+source = ripcord
+omit = ripcord/tests/*,ripcord/openstack/*
+
+[report]
+ignore-errors = True

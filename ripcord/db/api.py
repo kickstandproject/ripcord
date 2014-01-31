@@ -62,8 +62,19 @@ class Connection(object):
     def __init__(self):
         pass
 
-    def create_subscriber(self, values):
+    def create_subscriber(
+            self, username, domain, password, user, project, email='',
+            rpid=''):
         """Create a new subscriber."""
+        values = {
+            'domain': domain,
+            'email_address': email,
+            'password': password,
+            'project_id': project,
+            'rpid': rpid,
+            'user_id': user,
+            'username': username,
+        }
 
         values['ha1'] = hashlib.md5(
             '%s:%s:%s' % (

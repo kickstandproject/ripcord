@@ -32,7 +32,6 @@ LOG = logging.getLogger(__name__)
 class Subscriber(base.APIBase):
     """API representation of an subscriber."""
 
-    id = int
     domain = wtypes.text
     email_address = wtypes.text
     ha1 = wtypes.text
@@ -56,7 +55,10 @@ class SubscribersController(rest.RestController):
     @wsme_pecan.wsexpose(None, wtypes.text, status_code=204)
     def delete(self, uuid):
         """Delete an subscriber."""
-        pecan.request.db_api.delete_subscriber(uuid=uuid)
+        try:
+            pecan.request.db_api.delete_subscriber(uuid=uuid)
+        except exception.SubscriberNotFound as e:
+            raise wsme.exc.ClientSideError(e.message, status_code=e.code)
 
     @wsme_pecan.wsexpose([Subscriber])
     def get_all(self):
@@ -70,10 +72,8 @@ class SubscribersController(rest.RestController):
         """Retrieve information about the given subscriber."""
         try:
             result = pecan.request.db_api.get_subscriber(uuid)
-        except exception.SubscriberNotFound:
-            # TODO(pabelanger): See if there is a better way of handling
-            # exceptions.
-            raise wsme.exc.ClientSideError('Not found')
+        except exception.SubscriberNotFound as e:
+            raise wsme.exc.ClientSideError(e.message, status_code=e.code)
 
         return result
 
@@ -84,17 +84,15 @@ class SubscribersController(rest.RestController):
         user_id = pecan.request.headers.get('X-User-Id')
         project_id = pecan.request.headers.get('X-Tenant-Id')
 
-        try:
-            d = body.as_dict()
+        d = body.as_dict()
 
-            d['user_id'] = user_id
-            d['project_id'] = project_id
-            new_subscriber = pecan.request.db_api.create_subscriber(d)
-        except Exception:
-            # TODO(pabelanger): See if there is a better way of handling
-            # exceptions.
-            raise wsme.exc.ClientSideError('Invalid data')
-        return new_subscriber
+        res = pecan.request.db_api.create_subscriber(
+            username=d['username'], domain=d['domain'],
+            password=d['password'], user=user_id,
+            project=project_id, email=d['email_address'],
+            rpid=d['rpid'])
+
+        return res
 
     @wsme.validate(Subscriber)
     @wsme_pecan.wsexpose(Subscriber, wtypes.text, body=Subscriber)
