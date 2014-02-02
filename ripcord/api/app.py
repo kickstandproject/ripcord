@@ -73,7 +73,9 @@ def setup_app(pecan_config=None):
 
 class VersionSelectorApplication(object):
     def __init__(self):
-        self.v1 = setup_app()
+        pc = get_pecan_config()
+        pc.app.enable_acl = (CONF.auth_strategy == 'keystone')
+        self.v1 = setup_app(pecan_config=pc)
 
     def __call__(self, environ, start_response):
         return self.v1(environ, start_response)
