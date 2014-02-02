@@ -58,3 +58,21 @@ class TestCase(base.FunctionalTest):
         # NOTE(pabelanger): We add 3 because of created_at, uuid, and hidden
         # sqlalchemy object.
         self.assertEqual(len(res.json), len(json) + 2)
+
+    def test_subscriber_already_exists(self):
+        json = {
+            'domain': 'example.org',
+            'password': 'foobar',
+            'project_id': '5fccabbb-9d65-417f-8b0b-a2fc77b501e6',
+            'user_id': '09f07543-6dad-441b-acbf-1c61b5f4015e',
+            'username': 'alice',
+        }
+
+        tmp = self.post_json(
+            '/subscribers', params=json, status=200, headers=self.auth_headers)
+        self.assertTrue(tmp)
+        res = self.post_json(
+            '/subscribers', params=json, status=409, headers=self.auth_headers,
+            expect_errors=True)
+        self.assertEqual(res.status_int, 409)
+        self.assertTrue(res.json['error_message'])

@@ -81,16 +81,19 @@ class SubscribersController(rest.RestController):
     @wsme_pecan.wsexpose(Subscriber, body=Subscriber)
     def post(self, body):
         """Create a new subscriber."""
-        user_id = pecan.request.headers.get('X-User-Id')
-        project_id = pecan.request.headers.get('X-Tenant-Id')
+        try:
+            user_id = pecan.request.headers.get('X-User-Id')
+            project_id = pecan.request.headers.get('X-Tenant-Id')
 
-        d = body.as_dict()
+            d = body.as_dict()
 
-        res = pecan.request.db_api.create_subscriber(
-            username=d['username'], domain=d['domain'],
-            password=d['password'], user=user_id,
-            project=project_id, email=d['email_address'],
-            rpid=d['rpid'])
+            res = pecan.request.db_api.create_subscriber(
+                username=d['username'], domain=d['domain'],
+                password=d['password'], user=user_id,
+                project=project_id, email=d['email_address'],
+                rpid=d['rpid'])
+        except exception.SubscriberAlreadyExists as e:
+            raise wsme.exc.ClientSideError(e.message, status_code=e.code)
 
         return res
 

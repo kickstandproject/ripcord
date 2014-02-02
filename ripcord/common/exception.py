@@ -84,9 +84,19 @@ class RipcordException(Exception):
             return unicode(self)
 
 
+class Conflict(RipcordException):
+    code = 409
+    message = 'Conflict'
+
+
 class NotFound(RipcordException):
     message = 'Resource could not be found'
     code = 404
+
+
+class SubscriberAlreadyExists(Conflict):
+    message = ('A subscriber with username %(username) and domain %(domains) '
+               'already exists.')
 
 
 class SubscriberNotFound(NotFound):

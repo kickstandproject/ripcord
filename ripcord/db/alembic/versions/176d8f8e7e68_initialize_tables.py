@@ -27,6 +27,7 @@ from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import Integer
 from sqlalchemy import String
+from sqlalchemy import UniqueConstraint
 
 revision = '176d8f8e7e68'
 down_revision = None
@@ -46,6 +47,8 @@ subscriber = (
     Column('user_id', String(length=255)),
     Column('username', String(length=64), nullable=False, default=''),
     Column('uuid', String(length=255)),
+    UniqueConstraint(
+        'username', 'domain', name='uniq_subscriber0username0domain'),
 )
 
 tables = [subscriber]

@@ -17,6 +17,7 @@
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Integer
+from sqlalchemy import schema
 from sqlalchemy import String
 
 from ripcord.openstack.common.db.sqlalchemy import models
@@ -32,6 +33,10 @@ Base = declarative_base(cls=RipcordBase)
 
 class Subscriber(Base):
     __tablename__ = 'subscriber'
+    __table_args__ = (
+        schema.UniqueConstraint(
+            'username', 'domain', name='uniq_subscriber0username0domain'),)
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     domain = Column(String(64), nullable=False, default='')
     email_address = Column(String(64), nullable=False, default='')

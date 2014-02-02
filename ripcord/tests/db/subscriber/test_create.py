@@ -16,6 +16,7 @@
 
 import datetime
 
+from ripcord.common import exception
 from ripcord.openstack.common import uuidutils
 from ripcord.tests.db import base
 
@@ -80,3 +81,23 @@ class TestCase(base.FunctionalTest):
         # NOTE(pabelanger): We add 3 because of created_at, uuid, and hidden
         # sqlalchemy object.
         self.assertEqual(len(res.__dict__), len(row) + 3)
+
+    def test_subscriber_already_exists(self):
+        row = {
+            'domain': 'example.org',
+            'password': 'foobar',
+            'project_id': '793491dd5fa8477eb2d6a820193a183b',
+            'user_id': '02d99a62af974b26b510c3564ba84644',
+            'username': 'alice',
+        }
+        res = self.db_api.create_subscriber(
+            username=row['username'], domain=row['domain'],
+            password=row['password'], user=row['user_id'],
+            project=row['project_id'])
+        self.assertTrue(res)
+        self.assertRaises(
+            exception.SubscriberAlreadyExists,
+            self.db_api.create_subscriber,
+            username=row['username'], domain=row['domain'],
+            password=row['password'], user=row['user_id'],
+            project=row['project_id'])

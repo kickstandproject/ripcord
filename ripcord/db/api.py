@@ -24,6 +24,7 @@ from sqlalchemy.orm import exc
 from ripcord.common import exception
 from ripcord.db import models
 from ripcord.openstack.common.db import api
+from ripcord.openstack.common.db import exception as db_exc
 from ripcord.openstack.common.db.sqlalchemy import session as db_session
 from ripcord.openstack.common import log as logging
 from ripcord.openstack.common import uuidutils
@@ -86,7 +87,11 @@ class Connection(object):
                 values['password'])).hexdigest()
         values['uuid'] = uuidutils.generate_uuid()
 
-        res = self._create_model(model=models.Subscriber(), values=values)
+        try:
+            res = self._create_model(model=models.Subscriber(), values=values)
+        except db_exc.DBDuplicateEntry:
+            raise exception.SubscriberAlreadyExists(
+                username=values['username'], domain=values['domain'])
 
         return res
 
