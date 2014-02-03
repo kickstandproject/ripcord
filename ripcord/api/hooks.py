@@ -22,4 +22,4 @@ from ripcord.db import api as db_api
 class DBHook(hooks.PecanHook):
 
     def before(self, state):
-        state.request.db_api = db_api.get_instance()
+        state.request.db_api = db_api

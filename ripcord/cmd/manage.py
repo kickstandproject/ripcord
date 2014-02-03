@@ -55,7 +55,7 @@ import sys
 from oslo.config import cfg
 
 from ripcord.common import config
-from ripcord.db import migration
+from ripcord.db.sqlalchemy import migration
 from ripcord.openstack.common import log
 from ripcord import version
 

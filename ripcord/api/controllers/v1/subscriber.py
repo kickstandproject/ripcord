@@ -23,7 +23,7 @@ from wsmeext import pecan as wsme_pecan
 
 from ripcord.api.controllers.v1 import base
 from ripcord.common import exception
-from ripcord.db import models
+from ripcord.db.sqlalchemy import models
 from ripcord.openstack.common import log as logging
 
 LOG = logging.getLogger(__name__)
