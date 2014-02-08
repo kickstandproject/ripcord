@@ -58,12 +58,19 @@ def upgrade(migrate_engine):
     for table in tables:
         try:
             table.create()
-        except Exception:
-            LOG.info(repr(table))
-            LOG.exception('Exception while creating table.')
+        except Exception as e:
+            LOG.exception(e)
+            meta.drop_all(tables=tables)
             raise
 
 
 def downgrade(migrate_engine):
-    # Operations to reverse the above upgrade go here.
-    pass
+    meta = MetaData()
+    meta.bind = migrate_engine
+
+    subscriber = Table('subscriber', meta, autoload=True)
+
+    tables = [subscriber]
+
+    for table in tables:
+        table.drop()
