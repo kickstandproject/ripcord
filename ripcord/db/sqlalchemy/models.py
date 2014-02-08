@@ -32,7 +32,7 @@ Base = declarative_base(cls=RipcordBase)
 
 
 class Subscriber(Base):
-    __tablename__ = 'subscriber'
+    __tablename__ = 'subscribers'
     __table_args__ = (
         schema.UniqueConstraint(
             'username', 'domain', name='uniq_subscriber0username0domain'),)
