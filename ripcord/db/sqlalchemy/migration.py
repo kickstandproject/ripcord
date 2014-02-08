@@ -18,64 +18,24 @@
 
 import os
 
-from migrate import exceptions as versioning_exceptions
-from migrate.versioning import api as versioning_api
-from migrate.versioning.repository import Repository
-import sqlalchemy
-
-from ripcord.common import exception
-from ripcord.openstack.common.db.sqlalchemy import session as db_session
+from ripcord.openstack.common.db.sqlalchemy import migration as oslo_migration
 
 INIT_VERSION = 0
-_REPOSITORY = None
-
-get_engine = db_session.get_engine
 
 
 def db_sync(version=None):
-    if version is not None:
-        try:
-            version = int(version)
-        except ValueError:
-            raise exception.RipcordException("version should be an integer")
-
-    current_version = db_version()
-    repository = _find_migrate_repo()
-    if version is None or version > current_version:
-        return versioning_api.upgrade(get_engine(), repository, version)
-    else:
-        return versioning_api.downgrade(get_engine(), repository,
-                                        version)
+    path = os.path.join(
+        os.path.abspath(os.path.dirname(__file__)), 'migrate_repo')
+    return oslo_migration.db_sync(path, version, init_version=INIT_VERSION)
 
 
 def db_version():
-    repository = _find_migrate_repo()
-    try:
-        return versioning_api.db_version(get_engine(), repository)
-    except versioning_exceptions.DatabaseNotControlledError:
-        meta = sqlalchemy.MetaData()
-        engine = get_engine()
-        meta.reflect(bind=engine)
-        db_version_control(INIT_VERSION)
-        return versioning_api.db_version(get_engine(), repository)
-
-
-def db_initial_version():
-    return INIT_VERSION
+    path = os.path.join(
+        os.path.abspath(os.path.dirname(__file__)), 'migrate_repo')
+    return oslo_migration.db_version(path, INIT_VERSION)
 
 
 def db_version_control(version=None):
-    repository = _find_migrate_repo()
-    versioning_api.version_control(get_engine(), repository, version)
-    return version
-
-
-def _find_migrate_repo():
-    """Get the path for the migrate repository."""
-    global _REPOSITORY
-    path = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                        'migrate_repo')
-    assert os.path.exists(path)
-    if _REPOSITORY is None:
-        _REPOSITORY = Repository(path)
-    return _REPOSITORY
+    path = os.path.join(
+        os.path.abspath(os.path.dirname(__file__)), 'migrate_repo')
+    return oslo_migration.db_version_control(path, version)

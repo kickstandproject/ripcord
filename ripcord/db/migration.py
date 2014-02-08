@@ -30,4 +30,4 @@ def db_version():
 
 
 def db_initial_version():
-    return IMPL.db_initial_version()
+    return IMPL.INIT_VERSION
