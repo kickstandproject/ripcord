@@ -32,6 +32,7 @@ LOG = logging.getLogger(__name__)
 class Subscriber(base.APIBase):
     """API representation of an subscriber."""
 
+    disabled = bool
     domain = wtypes.text
     email_address = wtypes.text
     ha1 = wtypes.text
@@ -90,8 +91,8 @@ class SubscribersController(rest.RestController):
             res = pecan.request.db_api.create_subscriber(
                 username=d['username'], domain=d['domain'],
                 password=d['password'], user=user_id,
-                project=project_id, email=d['email_address'],
-                rpid=d['rpid'])
+                project=project_id, disabled=d['disabled'],
+                email=d['email_address'], rpid=d['rpid'])
         except exception.SubscriberAlreadyExists as e:
             raise wsme.exc.ClientSideError(e.message, status_code=e.code)
 

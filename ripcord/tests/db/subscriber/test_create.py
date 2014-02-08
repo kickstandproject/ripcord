@@ -25,6 +25,7 @@ class TestCase(base.FunctionalTest):
 
     def test_all_fields(self):
         row = {
+            'disabled': True,
             'domain': 'example.org',
             'email_address': 'alice@example.org',
             'ha1': '84ed3e3a76703c1044da21c8609334a2',
@@ -40,8 +41,8 @@ class TestCase(base.FunctionalTest):
         res = self.db_api.create_subscriber(
             username=row['username'], domain=row['domain'],
             password=row['password'], user=row['user_id'],
-            project=row['project_id'], email=row['email_address'],
-            rpid=row['rpid'])
+            project=row['project_id'], disabled=row['disabled'],
+            email=row['email_address'], rpid=row['rpid'])
 
         for k, v in row.iteritems():
             self.assertEqual(res[k], v)
@@ -55,6 +56,7 @@ class TestCase(base.FunctionalTest):
 
     def test_required_fields(self):
         row = {
+            'disabled': False,
             'domain': 'example.org',
             'email_address': '',
             'ha1': '84ed3e3a76703c1044da21c8609334a2',

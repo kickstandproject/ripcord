@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Integer
@@ -38,6 +39,7 @@ class Subscriber(Base):
             'username', 'domain', name='uniq_subscriber0username0domain'),)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    disabled = Column(Boolean, default=False)
     domain = Column(String(64), nullable=False, default='')
     email_address = Column(String(64), nullable=False, default='')
     ha1 = Column(String(64), nullable=False, default='')

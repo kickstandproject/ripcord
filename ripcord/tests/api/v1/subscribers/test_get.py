@@ -29,6 +29,7 @@ class TestCase(base.FunctionalTest):
 
     def test_get_one_success(self):
         json = {
+            'disabled': False,
             'domain': 'example.org',
             'email_address': 'alice@example.org',
             'ha1': '84ed3e3a76703c1044da21c8609334a2',
@@ -41,6 +42,7 @@ class TestCase(base.FunctionalTest):
             'username': 'alice',
         }
         params = {
+            'disabled': json['disabled'],
             'domain': json['domain'],
             'email_address': json['email_address'],
             'password': json['password'],
@@ -70,6 +72,7 @@ class TestCase(base.FunctionalTest):
 
     def test_get_all_success(self):
         json = {
+            'disabled': False,
             'domain': 'example.org',
             'email_address': 'alice@example.org',
             'ha1': '84ed3e3a76703c1044da21c8609334a2',
@@ -82,6 +85,7 @@ class TestCase(base.FunctionalTest):
             'username': 'alice',
         }
         params = {
+            'disabled': json['disabled'],
             'domain': json['domain'],
             'email_address': json['email_address'],
             'password': json['password'],

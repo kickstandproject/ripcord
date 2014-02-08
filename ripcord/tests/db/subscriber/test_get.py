@@ -31,6 +31,7 @@ class TestCase(base.FunctionalTest):
 
     def test_success(self):
         row = {
+            'disabled': False,
             'domain': 'example.org',
             'email_address': 'alice@example.org',
             'ha1': '84ed3e3a76703c1044da21c8609334a2',

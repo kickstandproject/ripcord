@@ -28,10 +28,11 @@ LOG = logging.getLogger(__name__)
 
 
 def create_subscriber(
-        username, domain, password, user, project, email='', rpid=''):
+        username, domain, password, user, project, disabled=False, email='',
+        rpid=''):
     return IMPL.create_subscriber(
         username=username, domain=domain, password=password, user=user,
-        project=project, email=email, rpid=rpid)
+        project=project, disabled=disabled, email=email, rpid=rpid)
 
 
 def delete_subscriber(uuid):

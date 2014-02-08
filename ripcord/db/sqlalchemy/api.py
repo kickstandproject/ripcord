@@ -51,10 +51,11 @@ def model_query(model, *args, **kwargs):
 
 
 def create_subscriber(
-        username, domain, password, user, project, email='',
+        username, domain, password, user, project, disabled=False, email='',
         rpid=''):
     """Create a new subscriber."""
     values = {
+        'disabled': disabled,
         'domain': domain,
         'email_address': email,
         'password': password,
