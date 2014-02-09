@@ -102,10 +102,18 @@ class SubscribersController(rest.RestController):
     @wsme_pecan.wsexpose(Subscriber, wtypes.text, body=Subscriber)
     def put(self, uuid, body):
         """Update an existing subscriber."""
-        subscriber = pecan.request.db_api.get_subscriber(uuid=uuid)
-        items = body.as_dict().items()
-        for k, v in [(k, v) for (k, v) in items if v]:
-            subscriber[k] = v
+        try:
+            user_id = pecan.request.headers.get('X-User-Id')
+            project_id = pecan.request.headers.get('X-Tenant-Id')
 
-        subscriber.save()
-        return subscriber
+            d = body.as_dict()
+
+            res = pecan.request.db_api.update_subscriber(
+                uuid=uuid, username=d['username'], domain=d['domain'],
+                password=d['password'], user=user_id, project=project_id,
+                disabled=d['disabled'], email=d['email_address'],
+                rpid=d['rpid'])
+        except exception.SubscriberNotFound as e:
+            raise wsme.exc.ClientSideError(e.message, status_code=e.code)
+
+        return res

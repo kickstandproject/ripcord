@@ -109,6 +109,43 @@ def list_subscribers():
     return res
 
 
+def update_subscriber(
+        uuid, disabled=None, domain=None, email=None, password=None,
+        project=None, rpid=None, user=None, username=None):
+    """Update an existing subscriber."""
+    res = get_subscriber(uuid=uuid)
+
+    if disabled is not None:
+        res['disabled'] = disabled
+    if domain is not None:
+        res['domain'] = domain
+    if email is not None:
+        res['email_address'] = email
+    if password is not None:
+        res['password'] = password
+    if project is not None:
+        res['project_id'] = project
+    if rpid is not None:
+        res['rpid'] = rpid
+    if user is not None:
+        res['user_id'] = user
+    if username is not None:
+        res['username'] = username
+
+    res['ha1'] = hashlib.md5(
+        '%s:%s:%s' % (
+            res['username'], res['domain'],
+            res['password'])).hexdigest()
+    res['ha1b'] = hashlib.md5(
+        '%s@%s:%s:%s' % (
+            res['username'], res['domain'], res['domain'],
+            res['password'])).hexdigest()
+
+    res.save()
+
+    return res
+
+
 def _create_model(model, values):
     """Create a new model."""
     model.update(values)

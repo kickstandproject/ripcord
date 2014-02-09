@@ -45,3 +45,12 @@ def get_subscriber(uuid):
 
 def list_subscribers():
     return IMPL.list_subscribers()
+
+
+def update_subscriber(
+        uuid, disabled=None, domain=None, email=None, password=None,
+        project=None, rpid=None, user=None, username=None):
+    return IMPL.update_subscriber(
+        uuid, disabled=disabled, domain=domain, email=email,
+        password=password, project=project, rpid=rpid, user=user,
+        username=username)
