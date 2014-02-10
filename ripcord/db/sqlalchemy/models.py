@@ -46,6 +46,44 @@ class Domain(Base):
     uuid = Column(String(255))
 
 
+class Quota(Base):
+    """Represents a single quota override for a project.
+
+    If there is no row for a given project id and resource, then the
+    default for the quota class is used.  If there is no row for a
+    given quota class and resource, then the default for the
+    deployment is used. If the row is present but the hard limit is
+    Null, then the resource is unlimited.
+    """
+
+    __tablename__ = 'quotas'
+    __table_args__ = (
+        schema.UniqueConstraint(
+            'project_id', 'resource',
+            name='uniq_quotas0project_id0resource'),)
+
+    id = Column(Integer, primary_key=True)
+    hard_limit = Column(Integer)
+    project_id = Column(String(255))
+    resource = Column(String(255), nullable=False)
+
+
+class QuotaClass(Base):
+    """Represents a single quota override for a quota class.
+
+    If there is no row for a given quota class and resource, then the
+    default for the deployment is used.  If the row is present but the
+    hard limit is Null, then the resource is unlimited.
+    """
+
+    __tablename__ = 'quota_classes'
+
+    id = Column(Integer, primary_key=True)
+    class_name = Column(String(255))
+    hard_limit = Column(Integer)
+    resource = Column(String(255))
+
+
 class Subscriber(Base):
     __tablename__ = 'subscribers'
     __table_args__ = (

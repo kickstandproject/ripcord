@@ -14,12 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ripcord.api.controllers.v1 import domain
-from ripcord.api.controllers.v1 import quota
-from ripcord.api.controllers.v1 import subscriber
+from ripcord.tests.api.v1 import base
 
 
-class Controller(object):
-    domains = domain.DomainsController()
-    quotas = quota.QuotasController()
-    subscribers = subscriber.SubscribersController()
+class TestCase(base.FunctionalTest):
+
+    def test_success(self):
+        json = {
+            'domains': 1,
+            'subscribers': 10,
+        }
+
+        res = self.get_json(
+            '/quotas/%s/defaults' % '0eda016a-b078-4bef-94ba-1ab10fe15a7d')
+        self.assertEqual(res, json)

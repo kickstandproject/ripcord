@@ -285,6 +285,22 @@
 #enforce_token_bind=permissive
 
 
+[quotas]
+
+#
+# Options defined in ripcord.quota
+#
+
+# Number of domains allowed per project (integer value)
+#quota_domains=1
+
+# Number of subscribers allowed per project (integer value)
+#quota_subscribers=10
+
+# Default driver to use for quota checks (string value)
+#quota_driver=ripcord.quota.DbQuotaDriver
+
+
 [database]
 
 #

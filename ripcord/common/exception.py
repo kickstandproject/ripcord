@@ -104,8 +104,20 @@ class DomainNotFound(NotFound):
 
 class SubscriberAlreadyExists(Conflict):
     message = ('A subscriber with username %(username) and domain %(domains) '
-               'already exists.')
+               'already exists')
 
 
 class SubscriberNotFound(NotFound):
     message = 'Subscriber %(uuid)s could not be found'
+
+
+class QuotaAlreadyExists(Conflict):
+    message = 'Quota %(name) already exists'
+
+
+class QuotaNotFound(NotFound):
+    message = 'Quota could not be found'
+
+
+class QuotaResourceUnknown(QuotaNotFound):
+    message = 'Unknown quota resources %(unknown)s'

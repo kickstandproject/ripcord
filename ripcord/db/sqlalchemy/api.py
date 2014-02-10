@@ -33,6 +33,8 @@ LOG = logging.getLogger(__name__)
 
 get_session = db_session.get_session
 
+_DEFAULT_QUOTA_NAME = 'default'
+
 
 def get_backend():
     """The backend is this module itself."""
@@ -209,6 +211,19 @@ def update_subscriber(
     res.save()
 
     return res
+
+
+def get_default_quota_class():
+    rows = model_query(
+        models.QuotaClass).filter_by(class_name=_DEFAULT_QUOTA_NAME).all()
+
+    result = {
+        'class_name': _DEFAULT_QUOTA_NAME
+    }
+    for row in rows:
+        result[row.resource] = row.hard_limit
+
+    return result
 
 
 def _create_model(model, values):

@@ -18,19 +18,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import fixtures
 import os
 import shutil
-import testtools
 
+import fixtures
 from oslo.config import cfg
+import stubout
+import testtools
 
 from ripcord.common import paths
 from ripcord.db import migration
 from ripcord.openstack.common.db.sqlalchemy import session
 from ripcord.openstack.common import log as logging
 from ripcord.tests import conf_fixture
-
 
 TEST_OPTS = [
     cfg.StrOpt(
@@ -91,6 +91,15 @@ class Database(fixtures.Fixture):
                             paths.state_path_rel(self.sqlite_db))
 
 
+class MoxStubout(fixtures.Fixture):
+    """Deal with code around mox and stubout as a fixture."""
+
+    def setUp(self):
+        super(MoxStubout, self).setUp()
+
+        self.stubs = stubout.StubOutForTesting()
+
+
 class TestCase(testtools.TestCase):
     """Test case base class for all unit tests.
 
@@ -116,6 +125,9 @@ class TestCase(testtools.TestCase):
                     sqlite_clean_db=CONF.sqlite_clean_db)
             self.useFixture(_DB_CACHE)
 
+        mox_fixture = self.useFixture(MoxStubout())
+        self.stubs = mox_fixture.stubs
+
     def path_get(self, project_file=None):
         """Get the absolute path to a file. Used for testing the API.
 
@@ -131,18 +143,8 @@ class TestCase(testtools.TestCase):
         else:
             return root
 
-    def config(self, **kw):
-        """Override some configuration values.
-
-        The keyword arguments are the names of configuration options to
-        override and their values.
-
-        If a group argument is supplied, the overrides are applied to
-        the specified configuration option group.
-
-        All overrides are automatically cleared at the end of the current
-        test by the fixtures cleanup process.
-        """
+    def flags(self, **kw):
+        """Override flag variables for a test."""
         group = kw.pop('group', None)
         for k, v in kw.iteritems():
             CONF.set_override(k, v, group)

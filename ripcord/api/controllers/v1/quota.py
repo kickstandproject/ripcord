@@ -14,12 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ripcord.api.controllers.v1 import domain
-from ripcord.api.controllers.v1 import quota
-from ripcord.api.controllers.v1 import subscriber
+from pecan import rest
+from wsmeext import pecan as wsme_pecan
+
+from ripcord.openstack.common import log as logging
+from ripcord import quota
+
+LOG = logging.getLogger(__name__)
+QUOTAS = quota.QUOTAS
 
 
-class Controller(object):
-    domains = domain.DomainsController()
-    quotas = quota.QuotasController()
-    subscribers = subscriber.SubscribersController()
+class QuotasController(rest.RestController):
+    """REST Controller for Quota."""
+
+    _custom_actions = {
+        'defaults': ['GET'],
+    }
+
+    @wsme_pecan.wsexpose(unicode, unicode)
+    def defaults(self, project_id):
+        return QUOTAS.get_defaults()
