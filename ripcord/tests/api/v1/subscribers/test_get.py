@@ -20,6 +20,36 @@ from ripcord.tests.api.v1 import base
 
 class TestCase(base.FunctionalTest):
 
+    def setUp(self):
+        super(TestCase, self).setUp()
+
+        json = {
+            'disabled': False,
+            'domain': 'example.org',
+            'email_address': 'bob@example.org',
+            'password': 'foobar',
+            'project_id': 'project1',
+            'rpid': 'bob@example.org',
+            'user_id': 'user1',
+            'username': 'bob',
+        }
+        params = {
+            'disabled': json['disabled'],
+            'domain': json['domain'],
+            'email_address': json['email_address'],
+            'password': json['password'],
+            'rpid': json['rpid'],
+            'username': json['username'],
+        }
+        headers = {
+            'X-User-Id': json['user_id'],
+            'X-Tenant-Id': json['project_id'],
+        }
+
+        tmp = self.post_json(
+            '/subscribers', params=params, status=200, headers=headers)
+        self.assertTrue(tmp)
+
     def test_get_one_failure(self):
         res = self.get_json(
             '/subscribers/%s' % '0eda016a-b078-4bef-94ba-1ab10fe15a7d',
@@ -50,8 +80,8 @@ class TestCase(base.FunctionalTest):
             'username': json['username'],
         }
         headers = {
-            'X-User-Id': '09f07543-6dad-441b-acbf-1c61b5f4015e',
-            'X-Tenant-Id': '5fccabbb-9d65-417f-8b0b-a2fc77b501e6',
+            'X-User-Id': json['user_id'],
+            'X-Tenant-Id': json['project_id'],
         }
 
         tmp = self.post_json(
@@ -93,8 +123,8 @@ class TestCase(base.FunctionalTest):
             'username': json['username'],
         }
         headers = {
-            'X-User-Id': '09f07543-6dad-441b-acbf-1c61b5f4015e',
-            'X-Tenant-Id': '5fccabbb-9d65-417f-8b0b-a2fc77b501e6',
+            'X-User-Id': json['user_id'],
+            'X-Tenant-Id': json['project_id'],
         }
 
         tmp = self.post_json(
@@ -102,13 +132,14 @@ class TestCase(base.FunctionalTest):
 
         self.assertTrue(tmp)
         res = self.get_json('/subscribers')
+        self.assertEqual(len(res), 2)
 
         for k, v in json.iteritems():
-            self.assertEqual(res[0][k], v)
+            self.assertEqual(res[1][k], v)
 
-        self.assertTrue(res[0]['created_at'])
-        self.assertTrue(uuidutils.is_uuid_like(res[0]['uuid']))
+        self.assertTrue(res[1]['created_at'])
+        self.assertTrue(uuidutils.is_uuid_like(res[1]['uuid']))
 
         # NOTE(pabelanger): We add 3 because of created_at, uuid, and hidden
         # sqlalchemy object.
-        self.assertEqual(len(res[0]), len(json) + 2)
+        self.assertEqual(len(res[1]), len(json) + 2)
