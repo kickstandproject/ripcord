@@ -27,6 +27,15 @@ IMPL = db_api.DBAPI(backend_mapping=_BACKEND_MAPPING)
 LOG = logging.getLogger(__name__)
 
 
+def create_domain(name, project_id, user_id):
+    return IMPL.create_domain(
+        name=name, project_id=project_id, user_id=user_id)
+
+
+def delete_domain(uuid):
+    return IMPL.delete_domain(uuid=uuid)
+
+
 def create_subscriber(
         username, domain, password, user, project, disabled=False, email='',
         rpid=''):
@@ -39,12 +48,25 @@ def delete_subscriber(uuid):
     return IMPL.delete_subscriber(uuid=uuid)
 
 
+def get_domain(uuid):
+    return IMPL.get_domain(uuid=uuid)
+
+
 def get_subscriber(uuid):
     return IMPL.get_subscriber(uuid=uuid)
 
 
+def list_domains():
+    return IMPL.list_domains()
+
+
 def list_subscribers():
     return IMPL.list_subscribers()
+
+
+def update_domain(uuid, name=None, project_id=None, user_id=None):
+    return IMPL.update_domain(
+        uuid, name=name, project_id=project_id, user_id=user_id)
 
 
 def update_subscriber(

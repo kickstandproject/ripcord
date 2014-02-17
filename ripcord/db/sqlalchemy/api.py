@@ -50,6 +50,24 @@ def model_query(model, *args, **kwargs):
     return query
 
 
+def create_domain(name, project_id, user_id):
+    """Create a new domain."""
+    values = {
+        'name': name,
+        'project_id': project_id,
+        'user_id': user_id,
+    }
+
+    values['uuid'] = uuidutils.generate_uuid()
+
+    try:
+        res = _create_model(model=models.Domain(), values=values)
+    except db_exc.DBDuplicateEntry:
+        raise exception.DomainAlreadyExists(name=values['name'])
+
+    return res
+
+
 def create_subscriber(
         username, domain, password, user, project, disabled=False, email='',
         rpid=''):
@@ -84,12 +102,30 @@ def create_subscriber(
     return res
 
 
+def delete_domain(uuid):
+    """Delete a domain."""
+    res = _delete_model(model=models.Domain, uuid=uuid)
+
+    if res != 1:
+        raise exception.DomainNotFound(uuid=uuid)
+
+
 def delete_subscriber(uuid):
     """Delete a subscriber."""
     res = _delete_model(model=models.Subscriber, uuid=uuid)
 
     if res != 1:
         raise exception.SubscriberNotFound(uuid=uuid)
+
+
+def get_domain(uuid):
+    """Retrieve information about the given domain."""
+    try:
+        res = _get_model(model=models.Domain, uuid=uuid)
+    except exc.NoResultFound:
+        raise exception.DomainNotFound(uuid=uuid)
+
+    return res
 
 
 def get_subscriber(uuid):
@@ -102,9 +138,33 @@ def get_subscriber(uuid):
     return res
 
 
+def list_domains():
+    """Retrieve a list of domains."""
+    res = _list_model(model=models.Domain)
+
+    return res
+
+
 def list_subscribers():
     """Retrieve a list of subscribers."""
     res = _list_model(model=models.Subscriber)
+
+    return res
+
+
+def update_domain(
+        uuid, name=None, project_id=None, user_id=None):
+    """Update an existing domain."""
+    res = get_domain(uuid=uuid)
+
+    if name is not None:
+        res['name'] = name
+    if project_id is not None:
+        res['project_id'] = project_id
+    if user_id is not None:
+        res['user_id'] = user_id
+
+    res.save()
 
     return res
 

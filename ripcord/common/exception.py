@@ -89,9 +89,17 @@ class Conflict(RipcordException):
     message = 'Conflict'
 
 
+class DomainAlreadyExists(Conflict):
+    message = 'Domain %(name) already exists'
+
+
 class NotFound(RipcordException):
     message = 'Resource could not be found'
     code = 404
+
+
+class DomainNotFound(NotFound):
+    message = 'Domain %(uuid)s could not be found'
 
 
 class SubscriberAlreadyExists(Conflict):
