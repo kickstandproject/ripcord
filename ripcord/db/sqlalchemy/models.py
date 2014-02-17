@@ -32,6 +32,19 @@ class RipcordBase(models.TimestampMixin, models.ModelBase):
 Base = declarative_base(cls=RipcordBase)
 
 
+class Domain(Base):
+    __tablename__ = 'domains'
+    __table_args__ = (
+        schema.UniqueConstraint(
+            'name', name='uniq_domain0name'),)
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(64), nullable=False, default='')
+    project_id = Column(String(255))
+    user_id = Column(String(255))
+    uuid = Column(String(255), unique=True)
+
+
 class Subscriber(Base):
     __tablename__ = 'subscribers'
     __table_args__ = (
