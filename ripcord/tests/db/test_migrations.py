@@ -129,6 +129,16 @@ class TestRipcordMigrations(test_migrations.BaseMigrationTestCase,
         t = db_utils.get_table(engine, table)
         self.assertNotIn(column, t.c)
 
+    def assertIndexExists(self, engine, table, index):
+        t = db_utils.get_table(engine, table)
+        index_names = [idx.name for idx in t.indexes]
+        self.assertIn(index, index_names)
+
+    def assertIndexNotExists(self, engine, table, index):
+        t = db_utils.get_table(engine, table)
+        index_names = [idx.name for idx in t.indexes]
+        self.assertNotIn(index, index_names)
+
     def test_mysql_opportunistically(self):
         self._test_mysql_opportunistically()
 
@@ -225,3 +235,65 @@ class TestRipcordMigrations(test_migrations.BaseMigrationTestCase,
     def _post_downgrade_004(self, engine):
         self.assertRaises(
             exc.NoSuchTableError, db_utils.get_table, engine, 'domains')
+
+    def _pre_upgrade_005(self, engine):
+        data = {
+            'name': 'example.org',
+            'project_id': 'project1',
+            'user_id': 'user1',
+            'uuid': 'd2901cc09db24ee5a8d2aa241c457b17',
+        }
+        table = db_utils.get_table(engine, 'domains')
+        engine.execute(table.insert(), data)
+
+        return data
+
+    def _check_005(self, engine, data):
+        self.assertColumnExists(engine, 'subscribers', 'domain_id')
+        self.assertColumnNotExists(engine, 'subscribers', 'domain')
+        self.assertIndexExists(engine, 'domains', 'uuid')
+
+        table = db_utils.get_table(engine, 'subscribers')
+        subscriber = table.select().\
+            where(table.c.username == 'alice').\
+            where(table.c.domain_id == 'd2901cc09db24ee5a8d2aa241c457b17').\
+            execute().fetchone()
+        self.assertEqual(subscriber.uuid, '5aedf7195c084e7a9ee0890cab045996')
+
+        insert = table.insert()
+        data = dict(
+            email_address='alice@example.org',
+            domain_id='d2901cc09db24ee5a8d2aa241c457b17',
+            ha1='84ed3e3a76703c1044da21c8609334a2',
+            ha1b='2dc0ac0e03670d8474db6b1e62df8fd1',
+            password='foobar',
+            project_id='project1',
+            user_id='user1',
+            username='alice')
+
+        self.assertRaises(exc.IntegrityError, insert.execute, data)
+
+    def _post_downgrade_005(self, engine):
+        self.assertColumnExists(engine, 'subscribers', 'domain')
+        self.assertColumnNotExists(engine, 'subscribers', 'domain_id')
+        self.assertIndexNotExists(engine, 'domains', 'uuid')
+
+        table = db_utils.get_table(engine, 'subscribers')
+        subscriber = table.select().\
+            where(table.c.username == 'alice').\
+            where(table.c.domain == 'example.org').\
+            execute().fetchone()
+        self.assertEqual(subscriber.uuid, '5aedf7195c084e7a9ee0890cab045996')
+
+        insert = table.insert()
+        data = dict(
+            email_address='alice@example.org',
+            domain='example.org',
+            ha1='84ed3e3a76703c1044da21c8609334a2',
+            ha1b='2dc0ac0e03670d8474db6b1e62df8fd1',
+            password='foobar',
+            project_id='project1',
+            user_id='user1',
+            username='alice')
+
+        self.assertRaises(exc.IntegrityError, insert.execute, data)

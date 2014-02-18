@@ -69,12 +69,15 @@ def create_domain(name, project_id, user_id):
 
 
 def create_subscriber(
-        username, domain, password, user_id, project_id, disabled=False,
+        username, domain_id, password, user_id, project_id, disabled=False,
         email='', rpid=''):
     """Create a new subscriber."""
+
+    model = get_domain(uuid=domain_id)
+
     values = {
         'disabled': disabled,
-        'domain': domain,
+        'domain_id': domain_id,
         'email_address': email,
         'password': password,
         'project_id': project_id,
@@ -85,11 +88,11 @@ def create_subscriber(
 
     values['ha1'] = hashlib.md5(
         '%s:%s:%s' % (
-            values['username'], values['domain'],
+            values['username'], model['name'],
             values['password'])).hexdigest()
     values['ha1b'] = hashlib.md5(
         '%s@%s:%s:%s' % (
-            values['username'], values['domain'], values['domain'],
+            values['username'], model['name'], model['name'],
             values['password'])).hexdigest()
     values['uuid'] = uuidutils.generate_uuid()
 
@@ -97,7 +100,7 @@ def create_subscriber(
         res = _create_model(model=models.Subscriber(), values=values)
     except db_exc.DBDuplicateEntry:
         raise exception.SubscriberAlreadyExists(
-            username=values['username'], domain=values['domain'])
+            username=values['username'], domain_id=model['name'])
 
     return res
 
@@ -170,15 +173,15 @@ def update_domain(
 
 
 def update_subscriber(
-        uuid, disabled=None, domain=None, email=None, password=None,
+        uuid, disabled=None, domain_id=None, email=None, password=None,
         project_id=None, rpid=None, user_id=None, username=None):
     """Update an existing subscriber."""
     res = get_subscriber(uuid=uuid)
 
     if disabled is not None:
         res['disabled'] = disabled
-    if domain is not None:
-        res['domain'] = domain
+    if domain_id is not None:
+        res['domain_id'] = domain_id
     if email is not None:
         res['email_address'] = email
     if password is not None:
@@ -192,13 +195,15 @@ def update_subscriber(
     if username is not None:
         res['username'] = username
 
+    model = get_domain(uuid=res['domain_id'])
+
     res['ha1'] = hashlib.md5(
         '%s:%s:%s' % (
-            res['username'], res['domain'],
+            res['username'], model['name'],
             res['password'])).hexdigest()
     res['ha1b'] = hashlib.md5(
         '%s@%s:%s:%s' % (
-            res['username'], res['domain'], res['domain'],
+            res['username'], model['name'], model['name'],
             res['password'])).hexdigest()
 
     res.save()

@@ -17,6 +17,7 @@
 from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import schema
 from sqlalchemy import String
@@ -35,25 +36,26 @@ Base = declarative_base(cls=RipcordBase)
 class Domain(Base):
     __tablename__ = 'domains'
     __table_args__ = (
-        schema.UniqueConstraint(
-            'name', name='uniq_domain0name'),)
+        schema.Index('uuid', 'uuid', unique=True),
+        schema.UniqueConstraint('name', name='uniq_domain0name'))
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(64), nullable=False, default='')
     project_id = Column(String(255))
     user_id = Column(String(255))
-    uuid = Column(String(255), unique=True)
+    uuid = Column(String(255))
 
 
 class Subscriber(Base):
     __tablename__ = 'subscribers'
     __table_args__ = (
         schema.UniqueConstraint(
-            'username', 'domain', name='uniq_subscriber0username0domain'),)
+            'username', 'domain_id',
+            name='uniq_subscriber0username0domain_id'),)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     disabled = Column(Boolean, default=False)
-    domain = Column(String(64), nullable=False, default='')
+    domain_id = Column(String(255), ForeignKey('domains.uuid'))
     email_address = Column(String(64), nullable=False, default='')
     ha1 = Column(String(64), nullable=False, default='')
     ha1b = Column(String(64), nullable=False, default='')

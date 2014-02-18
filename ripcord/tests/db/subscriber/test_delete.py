@@ -15,10 +15,23 @@
 # limitations under the License.
 
 from ripcord.common import exception
+from ripcord.openstack.common import uuidutils
 from ripcord.tests.db import base
 
 
 class TestCase(base.FunctionalTest):
+
+    def setUp(self):
+        super(TestCase, self).setUp()
+        self.domain_name = 'example.org'
+        self.project_id = '793491dd5fa8477eb2d6a820193a183b'
+        self.user_id = '02d99a62af974b26b510c3564ba84644'
+
+        res = self.db_api.create_domain(
+            name=self.domain_name, project_id=self.project_id,
+            user_id=self.user_id)
+        self.domain_id = res['uuid']
+        self.assertTrue(uuidutils.is_uuid_like(self.domain_id))
 
     def test_failure(self):
         self.assertRaises(
@@ -28,14 +41,14 @@ class TestCase(base.FunctionalTest):
 
     def test_success(self):
         row = {
-            'domain': 'example.org',
+            'domain_id': self.domain_id,
             'password': 'foobar',
-            'project_id': '793491dd5fa8477eb2d6a820193a183b',
-            'user_id': '02d99a62af974b26b510c3564ba84644',
+            'project_id': self.project_id,
+            'user_id': self.user_id,
             'username': 'alice',
         }
         res = self.db_api.create_subscriber(
-            username=row['username'], domain=row['domain'],
+            username=row['username'], domain_id=row['domain_id'],
             password=row['password'], user_id=row['user_id'],
             project_id=row['project_id'])
 

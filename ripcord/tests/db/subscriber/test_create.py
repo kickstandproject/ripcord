@@ -23,10 +23,22 @@ from ripcord.tests.db import base
 
 class TestCase(base.FunctionalTest):
 
+    def setUp(self):
+        super(TestCase, self).setUp()
+        self.domain_name = 'example.org'
+        self.project_id = '793491dd5fa8477eb2d6a820193a183b'
+        self.user_id = '02d99a62af974b26b510c3564ba84644'
+
+        res = self.db_api.create_domain(
+            name=self.domain_name, project_id=self.project_id,
+            user_id=self.user_id)
+        self.domain_id = res['uuid']
+        self.assertTrue(uuidutils.is_uuid_like(self.domain_id))
+
     def test_all_fields(self):
         row = {
             'disabled': True,
-            'domain': 'example.org',
+            'domain_id': self.domain_id,
             'email_address': 'alice@example.org',
             'ha1': '84ed3e3a76703c1044da21c8609334a2',
             'ha1b': '2dc0ac0e03670d8474db6b1e62df8fd1',
@@ -39,7 +51,7 @@ class TestCase(base.FunctionalTest):
             'username': 'alice',
         }
         res = self.db_api.create_subscriber(
-            username=row['username'], domain=row['domain'],
+            username=row['username'], domain_id=row['domain_id'],
             password=row['password'], user_id=row['user_id'],
             project_id=row['project_id'], disabled=row['disabled'],
             email=row['email_address'], rpid=row['rpid'])
@@ -57,7 +69,7 @@ class TestCase(base.FunctionalTest):
     def test_required_fields(self):
         row = {
             'disabled': False,
-            'domain': 'example.org',
+            'domain_id': self.domain_id,
             'email_address': '',
             'ha1': '84ed3e3a76703c1044da21c8609334a2',
             'ha1b': '2dc0ac0e03670d8474db6b1e62df8fd1',
@@ -70,7 +82,7 @@ class TestCase(base.FunctionalTest):
             'username': 'alice',
         }
         res = self.db_api.create_subscriber(
-            username=row['username'], domain=row['domain'],
+            username=row['username'], domain_id=row['domain_id'],
             password=row['password'], user_id=row['user_id'],
             project_id=row['project_id'])
 
@@ -86,20 +98,20 @@ class TestCase(base.FunctionalTest):
 
     def test_subscriber_already_exists(self):
         row = {
-            'domain': 'example.org',
+            'domain_id': self.domain_id,
             'password': 'foobar',
-            'project_id': '793491dd5fa8477eb2d6a820193a183b',
-            'user_id': '02d99a62af974b26b510c3564ba84644',
+            'project_id': self.project_id,
+            'user_id': self.user_id,
             'username': 'alice',
         }
         res = self.db_api.create_subscriber(
-            username=row['username'], domain=row['domain'],
+            username=row['username'], domain_id=row['domain_id'],
             password=row['password'], user_id=row['user_id'],
             project_id=row['project_id'])
         self.assertTrue(res)
         self.assertRaises(
             exception.SubscriberAlreadyExists,
             self.db_api.create_subscriber,
-            username=row['username'], domain=row['domain'],
+            username=row['username'], domain_id=row['domain_id'],
             password=row['password'], user_id=row['user_id'],
             project_id=row['project_id'])

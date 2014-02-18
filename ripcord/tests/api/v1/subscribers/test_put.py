@@ -20,6 +20,27 @@ from ripcord.tests.api.v1 import base
 
 class TestCase(base.FunctionalTest):
 
+    def setUp(self):
+        super(TestCase, self).setUp()
+        self.domain_name = 'example.org'
+        self.project_id = '793491dd5fa8477eb2d6a820193a183b'
+        self.user_id = '02d99a62af974b26b510c3564ba84644'
+
+        params = {
+            'name': self.domain_name,
+        }
+
+        self.headers = {
+            'X-Tenant-Id': self.project_id,
+            'X-User-Id': self.user_id,
+        }
+
+        res = self.post_json(
+            '/domains', params=params, status=200, headers=self.headers)
+
+        self.domain_id = res.json['uuid']
+        self.assertTrue(uuidutils.is_uuid_like(self.domain_id))
+
     def test_failure(self):
         res = self.put_json(
             '/subscribers/%s' % '0eda016a-b078-4bef-94ba-1ab10fe15a7d',
@@ -31,61 +52,59 @@ class TestCase(base.FunctionalTest):
     def test_all_fields(self):
         json = {
             'disabled': True,
-            'domain': 'example.org',
+            'domain_id': self.domain_id,
             'email_address': '',
             'ha1': '84ed3e3a76703c1044da21c8609334a2',
             'ha1b': '2dc0ac0e03670d8474db6b1e62df8fd1',
             'password': 'foobar',
-            'project_id': '5fccabbb-9d65-417f-8b0b-a2fc77b501e6',
+            'project_id': self.project_id,
             'rpid': '',
             'updated_at': None,
-            'user_id': '09f07543-6dad-441b-acbf-1c61b5f4015e',
+            'user_id': self.user_id,
             'username': 'alice',
         }
         params = {
             'disabled': json['disabled'],
-            'domain': json['domain'],
+            'domain_id': json['domain_id'],
             'email_address': json['email_address'],
             'password': json['password'],
             'rpid': json['rpid'],
             'username': json['username'],
         }
-        headers = {
-            'X-User-Id': json['user_id'],
-            'X-Tenant-Id': json['project_id'],
-        }
 
         tmp = self.post_json(
-            '/subscribers', params=params, status=200, headers=headers)
+            '/subscribers', params=params, status=200, headers=self.headers)
         self.assertTrue(uuidutils.is_uuid_like(tmp.json['uuid']))
+
+        params = {
+            'name': 'example.net',
+        }
+        domain = self.post_json(
+            '/domains', params=params, status=200, headers=self.headers)
 
         json = {
             'disabled': False,
-            'domain': 'example.net',
+            'domain_id': domain.json['uuid'],
             'email_address': 'bob@example.net',
             'ha1': '9ea0e7b974be5095939ab2e6795f0159',
             'ha1b': '335bfe1e9cb562b4c76f285b69e9f9fa',
             'password': 'secret',
-            'project_id': '09f07543-6dad-441b-acbf-1c61b5f4015e',
+            'project_id': self.project_id,
             'rpid': 'bob@example.net',
-            'user_id': '5fccabbb-9d65-417f-8b0b-a2fc77b501e6',
+            'user_id': self.user_id,
             'username': 'bob',
         }
         params = {
             'disabled': json['disabled'],
-            'domain': json['domain'],
+            'domain_id': json['domain_id'],
             'email_address': json['email_address'],
             'password': json['password'],
             'rpid': json['rpid'],
             'username': json['username'],
         }
-        headers = {
-            'X-User-Id': json['user_id'],
-            'X-Tenant-Id': json['project_id'],
-        }
         res = self.put_json(
             '/subscribers/%s' % tmp.json['uuid'], params=params, status=200,
-            headers=headers)
+            headers=self.headers)
 
         for k, v in json.iteritems():
             self.assertEqual(res.json[k], v)
@@ -101,32 +120,28 @@ class TestCase(base.FunctionalTest):
     def test_no_fields(self):
         json = {
             'disabled': False,
-            'domain': 'example.org',
+            'domain_id': self.domain_id,
             'email_address': '',
             'ha1': '84ed3e3a76703c1044da21c8609334a2',
             'ha1b': '2dc0ac0e03670d8474db6b1e62df8fd1',
             'password': 'foobar',
-            'project_id': '5fccabbb-9d65-417f-8b0b-a2fc77b501e6',
+            'project_id': self.project_id,
             'rpid': '',
             'updated_at': None,
-            'user_id': '09f07543-6dad-441b-acbf-1c61b5f4015e',
+            'user_id': self.user_id,
             'username': 'alice',
         }
         params = {
             'disabled': json['disabled'],
-            'domain': json['domain'],
+            'domain_id': json['domain_id'],
             'email_address': json['email_address'],
             'password': json['password'],
             'rpid': json['rpid'],
             'username': json['username'],
         }
-        headers = {
-            'X-User-Id': json['user_id'],
-            'X-Tenant-Id': json['project_id'],
-        }
 
         tmp = self.post_json(
-            '/subscribers', params=params, status=200, headers=headers)
+            '/subscribers', params=params, status=200, headers=self.headers)
         self.assertTrue(uuidutils.is_uuid_like(tmp.json['uuid']))
 
         res = self.put_json(
@@ -138,5 +153,5 @@ class TestCase(base.FunctionalTest):
         self.assertTrue(res.json['created_at'])
         self.assertTrue(uuidutils.is_uuid_like(res.json['uuid']))
 
-        # NOTE(pabelanger): We add 3 because of created_at and uuid
+        # NOTE(pabelanger): We add 2 because of created_at and uuid
         self.assertEqual(len(res.json), len(json) + 2)

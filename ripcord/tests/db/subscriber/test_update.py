@@ -23,6 +23,18 @@ from ripcord.tests.db import base
 
 class TestCase(base.FunctionalTest):
 
+    def setUp(self):
+        super(TestCase, self).setUp()
+        self.domain_name = 'example.org'
+        self.project_id = '793491dd5fa8477eb2d6a820193a183b'
+        self.user_id = '02d99a62af974b26b510c3564ba84644'
+
+        res = self.db_api.create_domain(
+            name=self.domain_name, project_id=self.project_id,
+            user_id=self.user_id)
+        self.domain_id = res['uuid']
+        self.assertTrue(uuidutils.is_uuid_like(self.domain_id))
+
     def test_failure(self):
         self.assertRaises(
             exception.SubscriberNotFound,
@@ -32,28 +44,32 @@ class TestCase(base.FunctionalTest):
     def test_all_fields(self):
         row = {
             'disabled': False,
-            'domain': 'example.org',
+            'domain_id': self.domain_id,
             'email_address': '',
             'ha1': '84ed3e3a76703c1044da21c8609334a2',
             'ha1b': '2dc0ac0e03670d8474db6b1e62df8fd1',
             'id': 1,
             'password': 'foobar',
-            'project_id': '793491dd5fa8477eb2d6a820193a183b',
+            'project_id': self.project_id,
             'rpid': '',
             'updated_at': None,
-            'user_id': '02d99a62af974b26b510c3564ba84644',
+            'user_id': self.user_id,
             'username': 'alice',
         }
         tmp = self.db_api.create_subscriber(
-            username=row['username'], domain=row['domain'],
+            username=row['username'], domain_id=row['domain_id'],
             password=row['password'], user_id=row['user_id'],
             project_id=row['project_id'], disabled=row['disabled'],
             email=row['email_address'], rpid=row['rpid'])
         self.assertTrue(uuidutils.is_uuid_like(tmp['uuid']))
 
+        domain = self.db_api.create_domain(
+            name='example.net', project_id=self.project_id,
+            user_id=self.user_id)
+
         row = {
             'disabled': True,
-            'domain': 'example.net',
+            'domain_id': domain['uuid'],
             'email_address': 'bob@example.net',
             'ha1': '9ea0e7b974be5095939ab2e6795f0159',
             'ha1b': '335bfe1e9cb562b4c76f285b69e9f9fa',
@@ -65,10 +81,11 @@ class TestCase(base.FunctionalTest):
             'username': 'bob',
         }
         res = self.db_api.update_subscriber(
-            uuid=tmp['uuid'], username=row['username'], domain=row['domain'],
-            password=row['password'], user_id=row['user_id'],
-            project_id=row['project_id'], disabled=row['disabled'],
-            email=row['email_address'], rpid=row['rpid'])
+            uuid=tmp['uuid'], username=row['username'],
+            domain_id=row['domain_id'], password=row['password'],
+            user_id=row['user_id'], project_id=row['project_id'],
+            disabled=row['disabled'], email=row['email_address'],
+            rpid=row['rpid'])
 
         for k, v in row.iteritems():
             self.assertEqual(res[k], v)
@@ -84,20 +101,20 @@ class TestCase(base.FunctionalTest):
     def test_no_fields(self):
         row = {
             'disabled': False,
-            'domain': 'example.org',
+            'domain_id': self.domain_id,
             'email_address': '',
             'ha1': '84ed3e3a76703c1044da21c8609334a2',
             'ha1b': '2dc0ac0e03670d8474db6b1e62df8fd1',
             'id': 1,
             'password': 'foobar',
-            'project_id': '793491dd5fa8477eb2d6a820193a183b',
+            'project_id': self.project_id,
             'rpid': '',
             'updated_at': None,
-            'user_id': '02d99a62af974b26b510c3564ba84644',
+            'user_id': self.user_id,
             'username': 'alice',
         }
         tmp = self.db_api.create_subscriber(
-            username=row['username'], domain=row['domain'],
+            username=row['username'], domain_id=row['domain_id'],
             password=row['password'], user_id=row['user_id'],
             project_id=row['project_id'], disabled=row['disabled'],
             email=row['email_address'], rpid=row['rpid'])

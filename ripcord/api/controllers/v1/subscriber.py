@@ -33,7 +33,7 @@ class Subscriber(base.APIBase):
     """API representation of an subscriber."""
 
     disabled = bool
-    domain = wtypes.text
+    domain_id = wtypes.text
     email_address = wtypes.text
     ha1 = wtypes.text
     ha1b = wtypes.text
@@ -90,7 +90,7 @@ class SubscribersController(rest.RestController):
             d = body.as_dict()
 
             res = pecan.request.db_api.create_subscriber(
-                username=d['username'], domain=d['domain'],
+                username=d['username'], domain_id=d['domain_id'],
                 password=d['password'], user_id=user_id,
                 project_id=project_id, disabled=d['disabled'],
                 email=d['email_address'], rpid=d['rpid'])
@@ -110,7 +110,7 @@ class SubscribersController(rest.RestController):
             d = body.as_dict()
 
             res = pecan.request.db_api.update_subscriber(
-                uuid=uuid, username=d['username'], domain=d['domain'],
+                uuid=uuid, username=d['username'], domain_id=d['domain_id'],
                 password=d['password'], user_id=user_id, project_id=project_id,
                 disabled=d['disabled'], email=d['email_address'],
                 rpid=d['rpid'])
