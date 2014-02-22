@@ -92,7 +92,12 @@ class Database(fixtures.Fixture):
 
 
 class TestCase(testtools.TestCase):
-    """Test case base class for all unit tests."""
+    """Test case base class for all unit tests.
+
+    Due to the slowness of DB access, please consider deriving from
+    `NoDBTestCase` first.
+    """
+    USES_DB = True
 
     def setUp(self):
         """Run before each method to initialize test environment."""
@@ -101,13 +106,15 @@ class TestCase(testtools.TestCase):
         self.log_fixture = self.useFixture(fixtures.FakeLogger())
         self.useFixture(conf_fixture.ConfFixture(CONF))
 
-        global _DB_CACHE
-        if not _DB_CACHE:
-            _DB_CACHE = Database(
-                session, migration, sql_connection=CONF.database.connection,
-                sqlite_db=CONF.sqlite_db, sqlite_clean_db=CONF.sqlite_clean_db
-            )
-        self.useFixture(_DB_CACHE)
+        if self.USES_DB:
+            global _DB_CACHE
+            if not _DB_CACHE:
+                _DB_CACHE = Database(
+                    session, migration,
+                    sql_connection=CONF.database.connection,
+                    sqlite_db=CONF.sqlite_db,
+                    sqlite_clean_db=CONF.sqlite_clean_db)
+            self.useFixture(_DB_CACHE)
 
     def path_get(self, project_file=None):
         """Get the absolute path to a file. Used for testing the API.
@@ -139,3 +146,13 @@ class TestCase(testtools.TestCase):
         group = kw.pop('group', None)
         for k, v in kw.iteritems():
             CONF.set_override(k, v, group)
+
+
+class NoDBTestCase(TestCase):
+    """Test case for no DB access.
+
+    `NoDBTestCase` differs from TestCase in that DB access is not supported.
+    This makes tests run significantly faster. If possible, all new tests
+    should derive from this class.
+    """
+    USES_DB = False
