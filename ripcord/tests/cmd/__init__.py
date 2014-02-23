@@ -13,16 +13,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from ripcord.db import migration
-from ripcord import test
-
-
-class TestCase(test.TestCase):
-    def setUp(self):
-        super(TestCase, self).setUp()
-
-    def test_sync_and_version(self):
-        migration.db_sync()
-        v = migration.db_version()
-        self.assertTrue(v > migration.INIT_VERSION)

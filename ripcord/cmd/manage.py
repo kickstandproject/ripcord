@@ -68,7 +68,4 @@ def main():
     log.setup('ripcord')
     CONF.log_opt_values(LOG, logging.INFO)
 
-    try:
-        CONF.command.func()
-    except Exception as e:
-        LOG.exception(e)
+    CONF.command.func()

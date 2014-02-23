@@ -3,6 +3,7 @@ hacking>=0.8.0,<0.9
 coverage
 discover
 fixtures>=0.3.12
+mock>=1.0
 MySQL-python
 sphinx>=1.1.2,<1.2
 testrepository>=0.0.17

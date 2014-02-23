@@ -371,7 +371,7 @@ class TestRipcordMigrations(BaseMigrationTestCase, CommonTestsMixIn):
 
         if self.migration is None:
             self.migration = __import__(
-                'ripcord.db.sqlalchemy.migration',
+                'ripcord.db.migration',
                 globals(), locals(), ['INIT_VERSION'], -1)
             self.INIT_VERSION = self.migration.INIT_VERSION
         if self.migration_api is None:
