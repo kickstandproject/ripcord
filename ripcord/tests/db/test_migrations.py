@@ -238,7 +238,7 @@ class BaseMigrationTestCase(test.NoDBTestCase):
 
         # build a fully populated mysql database with all the tables
         self._reset_databases()
-        self._walk_versions(engine, False, False)
+        self._walk_versions(engine, self.snake_walk)
 
         connection = engine.connect()
         # sanity check
@@ -281,18 +281,19 @@ class BaseMigrationTestCase(test.NoDBTestCase):
                 downgraded = self._migrate_down(
                     engine, version - 1, with_data=True)
                 if downgraded:
-                    self._migrate_up(engine, version)
+                    self._migrate_up(engine, version, with_data=True)
 
         if downgrade:
             # Now walk it back down to 0 from the latest, testing
             # the downgrade paths.
             for version in reversed(versions):
                 # downgrade -> upgrade -> downgrade
-                downgraded = self._migrate_down(engine, version - 1)
+                downgraded = self._migrate_down(
+                    engine, version - 1, with_data=True)
 
                 if snake_walk and downgraded:
-                    self._migrate_up(engine, version)
-                    self._migrate_down(engine, version - 1)
+                    self._migrate_up(engine, version, with_data=True)
+                    self._migrate_down(engine, version - 1, with_data=True)
 
     def _migrate_down(self, engine, version, with_data=False):
         try:
