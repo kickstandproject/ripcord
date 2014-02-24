@@ -382,6 +382,14 @@ class TestRipcordMigrations(BaseMigrationTestCase, CommonTestsMixIn):
                 globals(), locals(), ['versioning_api'], -1)
             self.migration_api = temp.versioning_api
 
+    def assertColumnExists(self, engine, table, column):
+        t = db_utils.get_table(engine, table)
+        self.assertIn(column, t.c)
+
+    def assertColumnNotExists(self, engine, table, column):
+        t = db_utils.get_table(engine, table)
+        self.assertNotIn(column, t.c)
+
     def _check_001(self, engine, data):
         subscriber = db_utils.get_table(engine, 'subscriber')
 
@@ -408,6 +416,17 @@ class TestRipcordMigrations(BaseMigrationTestCase, CommonTestsMixIn):
     def _post_downgrade_001(self, engine):
         self.assertRaises(
             exc.NoSuchTableError, db_utils.get_table, engine, 'subscriber')
+
+    def _check_003(self, engine, data):
+        self.assertColumnExists(engine, 'subscribers', 'disabled')
+        table = db_utils.get_table(engine, 'subscribers')
+
+        subscribers = table.select(
+            table.c.disabled == 0).execute().fetchall()
+        self.assertEqual(len(subscribers), 1)
+
+    def _post_downgrade_003(self, engine):
+        self.assertColumnNotExists(engine, 'subscribers', 'disabled')
 
 
 class ProjectTestCase(test.NoDBTestCase):
