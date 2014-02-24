@@ -41,9 +41,10 @@ import urlparse
 
 from migrate.versioning import repository
 import sqlalchemy
-import sqlalchemy.exc
+from sqlalchemy import exc
 
 import ripcord.db.sqlalchemy.migrate_repo
+from ripcord.db.sqlalchemy import utils as db_utils
 from ripcord.openstack.common import log as logging
 from ripcord import test
 
@@ -379,6 +380,33 @@ class TestRipcordMigrations(BaseMigrationTestCase, CommonTestsMixIn):
                 'ripcord.openstack.common.db.sqlalchemy.migration',
                 globals(), locals(), ['versioning_api'], -1)
             self.migration_api = temp.versioning_api
+
+    def _check_001(self, engine, data):
+        subscriber = db_utils.get_table(engine, 'subscriber')
+
+        cols = [
+            'id', 'created_at', 'domain', 'email_address', 'ha1', 'ha1b',
+            'password', 'project_id', 'rpid', 'updated_at', 'user_id',
+            'username', 'uuid']
+
+        for c in cols:
+            self.assertIn(c, subscriber.c)
+
+        insert = subscriber.insert()
+
+        dupe_id = dict(
+            id=1, email_address='alice@example.org', domain='example.org',
+            ha1='foo', ha1b='bar', password='foobar', username='alice')
+
+        insert.execute(dupe_id)
+        self.assertRaises(exc.IntegrityError, insert.execute, dupe_id)
+
+        del dupe_id['id']
+        self.assertRaises(exc.IntegrityError, insert.execute, dupe_id)
+
+    def _post_downgrade_001(self, engine):
+        self.assertRaises(
+            exc.NoSuchTableError, db_utils.get_table, engine, 'subscriber')
 
 
 class ProjectTestCase(test.NoDBTestCase):
