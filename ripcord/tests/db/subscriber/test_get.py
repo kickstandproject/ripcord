@@ -46,8 +46,8 @@ class TestCase(base.FunctionalTest):
         }
         tmp = self.db_api.create_subscriber(
             username=row['username'], domain=row['domain'],
-            password=row['password'], user=row['user_id'],
-            project=row['project_id'], email=row['email_address'],
+            password=row['password'], user_id=row['user_id'],
+            project_id=row['project_id'], email=row['email_address'],
             rpid=row['rpid'])
 
         res = self.db_api.get_subscriber(

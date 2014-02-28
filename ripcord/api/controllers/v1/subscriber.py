@@ -90,8 +90,8 @@ class SubscribersController(rest.RestController):
 
             res = pecan.request.db_api.create_subscriber(
                 username=d['username'], domain=d['domain'],
-                password=d['password'], user=user_id,
-                project=project_id, disabled=d['disabled'],
+                password=d['password'], user_id=user_id,
+                project_id=project_id, disabled=d['disabled'],
                 email=d['email_address'], rpid=d['rpid'])
         except exception.SubscriberAlreadyExists as e:
             raise wsme.exc.ClientSideError(e.message, status_code=e.code)
@@ -110,7 +110,7 @@ class SubscribersController(rest.RestController):
 
             res = pecan.request.db_api.update_subscriber(
                 uuid=uuid, username=d['username'], domain=d['domain'],
-                password=d['password'], user=user_id, project=project_id,
+                password=d['password'], user_id=user_id, project_id=project_id,
                 disabled=d['disabled'], email=d['email_address'],
                 rpid=d['rpid'])
         except exception.SubscriberNotFound as e:

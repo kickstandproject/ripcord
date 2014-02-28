@@ -69,17 +69,17 @@ def create_domain(name, project_id, user_id):
 
 
 def create_subscriber(
-        username, domain, password, user, project, disabled=False, email='',
-        rpid=''):
+        username, domain, password, user_id, project_id, disabled=False,
+        email='', rpid=''):
     """Create a new subscriber."""
     values = {
         'disabled': disabled,
         'domain': domain,
         'email_address': email,
         'password': password,
-        'project_id': project,
+        'project_id': project_id,
         'rpid': rpid,
-        'user_id': user,
+        'user_id': user_id,
         'username': username,
     }
 
@@ -171,7 +171,7 @@ def update_domain(
 
 def update_subscriber(
         uuid, disabled=None, domain=None, email=None, password=None,
-        project=None, rpid=None, user=None, username=None):
+        project_id=None, rpid=None, user_id=None, username=None):
     """Update an existing subscriber."""
     res = get_subscriber(uuid=uuid)
 
@@ -183,12 +183,12 @@ def update_subscriber(
         res['email_address'] = email
     if password is not None:
         res['password'] = password
-    if project is not None:
-        res['project_id'] = project
+    if project_id is not None:
+        res['project_id'] = project_id
     if rpid is not None:
         res['rpid'] = rpid
-    if user is not None:
-        res['user_id'] = user
+    if user_id is not None:
+        res['user_id'] = user_id
     if username is not None:
         res['username'] = username
 

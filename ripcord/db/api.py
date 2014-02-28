@@ -37,11 +37,11 @@ def delete_domain(uuid):
 
 
 def create_subscriber(
-        username, domain, password, user, project, disabled=False, email='',
-        rpid=''):
+        username, domain, password, user_id, project_id, disabled=False,
+        email='', rpid=''):
     return IMPL.create_subscriber(
-        username=username, domain=domain, password=password, user=user,
-        project=project, disabled=disabled, email=email, rpid=rpid)
+        username=username, domain=domain, password=password, user_id=user_id,
+        project_id=project_id, disabled=disabled, email=email, rpid=rpid)
 
 
 def delete_subscriber(uuid):
@@ -71,8 +71,8 @@ def update_domain(uuid, name=None, project_id=None, user_id=None):
 
 def update_subscriber(
         uuid, disabled=None, domain=None, email=None, password=None,
-        project=None, rpid=None, user=None, username=None):
+        project_id=None, rpid=None, user_id=None, username=None):
     return IMPL.update_subscriber(
         uuid, disabled=disabled, domain=domain, email=email,
-        password=password, project=project, rpid=rpid, user=user,
+        password=password, project_id=project_id, rpid=rpid, user_id=user_id,
         username=username)

@@ -40,8 +40,8 @@ class TestCase(base.FunctionalTest):
         }
         res = self.db_api.create_subscriber(
             username=row['username'], domain=row['domain'],
-            password=row['password'], user=row['user_id'],
-            project=row['project_id'], disabled=row['disabled'],
+            password=row['password'], user_id=row['user_id'],
+            project_id=row['project_id'], disabled=row['disabled'],
             email=row['email_address'], rpid=row['rpid'])
 
         for k, v in row.iteritems():
@@ -71,8 +71,8 @@ class TestCase(base.FunctionalTest):
         }
         res = self.db_api.create_subscriber(
             username=row['username'], domain=row['domain'],
-            password=row['password'], user=row['user_id'],
-            project=row['project_id'])
+            password=row['password'], user_id=row['user_id'],
+            project_id=row['project_id'])
 
         for k, v in row.iteritems():
             self.assertEqual(res[k], v)
@@ -94,12 +94,12 @@ class TestCase(base.FunctionalTest):
         }
         res = self.db_api.create_subscriber(
             username=row['username'], domain=row['domain'],
-            password=row['password'], user=row['user_id'],
-            project=row['project_id'])
+            password=row['password'], user_id=row['user_id'],
+            project_id=row['project_id'])
         self.assertTrue(res)
         self.assertRaises(
             exception.SubscriberAlreadyExists,
             self.db_api.create_subscriber,
             username=row['username'], domain=row['domain'],
-            password=row['password'], user=row['user_id'],
-            project=row['project_id'])
+            password=row['password'], user_id=row['user_id'],
+            project_id=row['project_id'])

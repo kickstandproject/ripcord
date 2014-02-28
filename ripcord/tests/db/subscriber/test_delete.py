@@ -36,8 +36,8 @@ class TestCase(base.FunctionalTest):
         }
         res = self.db_api.create_subscriber(
             username=row['username'], domain=row['domain'],
-            password=row['password'], user=row['user_id'],
-            project=row['project_id'])
+            password=row['password'], user_id=row['user_id'],
+            project_id=row['project_id'])
 
         self.assertTrue(res)
         self.db_api.delete_subscriber(uuid=res['uuid'])
