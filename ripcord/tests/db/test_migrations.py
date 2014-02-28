@@ -428,6 +428,31 @@ class TestRipcordMigrations(BaseMigrationTestCase, CommonTestsMixIn):
     def _post_downgrade_003(self, engine):
         self.assertColumnNotExists(engine, 'subscribers', 'disabled')
 
+    def _check_004(self, engine, data):
+        table = db_utils.get_table(engine, 'domains')
+
+        cols = [
+            'id', 'created_at', 'name', 'project_id', 'updated_at', 'user_id',
+            'uuid']
+
+        for c in cols:
+            self.assertIn(c, table.c)
+
+        insert = table.insert()
+
+        dupe_id = dict(
+            id=1, name='example.org')
+
+        insert.execute(dupe_id)
+        self.assertRaises(exc.IntegrityError, insert.execute, dupe_id)
+
+        del dupe_id['id']
+        self.assertRaises(exc.IntegrityError, insert.execute, dupe_id)
+
+    def _post_downgrade_004(self, engine):
+        self.assertRaises(
+            exc.NoSuchTableError, db_utils.get_table, engine, 'domains')
+
 
 class ProjectTestCase(test.NoDBTestCase):
 
