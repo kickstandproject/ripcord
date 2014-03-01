@@ -34,7 +34,7 @@ class TestCase(base.FunctionalTest):
             name=row['name'], user_id=row['user_id'],
             project_id=row['project_id'])
 
-        res = self.db_api.list_domains()
+        res = self.db_api.list_domains(project_id=row['project_id'])
 
         self.assertEqual(len(res), 1)
 

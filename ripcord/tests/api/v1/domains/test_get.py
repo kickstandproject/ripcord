@@ -75,7 +75,7 @@ class TestCase(base.FunctionalTest):
             '/domains', params=params, status=200, headers=headers)
 
         self.assertTrue(tmp)
-        res = self.get_json('/domains')
+        res = self.get_json('/domains', headers=headers)
 
         for k, v in json.iteritems():
             self.assertEqual(res[0][k], v)

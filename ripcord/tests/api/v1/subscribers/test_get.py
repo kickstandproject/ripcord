@@ -131,15 +131,14 @@ class TestCase(base.FunctionalTest):
             '/subscribers', params=params, status=200, headers=headers)
 
         self.assertTrue(tmp)
-        res = self.get_json('/subscribers')
-        self.assertEqual(len(res), 2)
+        res = self.get_json('/subscribers', headers=headers)
+        self.assertEqual(len(res), 1)
 
         for k, v in json.iteritems():
-            self.assertEqual(res[1][k], v)
+            self.assertEqual(res[0][k], v)
 
-        self.assertTrue(res[1]['created_at'])
-        self.assertTrue(uuidutils.is_uuid_like(res[1]['uuid']))
+        self.assertTrue(res[0]['created_at'])
+        self.assertTrue(uuidutils.is_uuid_like(res[0]['uuid']))
 
-        # NOTE(pabelanger): We add 3 because of created_at, uuid, and hidden
-        # sqlalchemy object.
-        self.assertEqual(len(res[1]), len(json) + 2)
+        # NOTE(pabelanger): We add 2 because of created_at and uuid.
+        self.assertEqual(len(res[0]), len(json) + 2)

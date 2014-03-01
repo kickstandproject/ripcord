@@ -138,16 +138,16 @@ def get_subscriber(uuid):
     return res
 
 
-def list_domains():
+def list_domains(project_id):
     """Retrieve a list of domains."""
-    res = _list_model(model=models.Domain)
+    res = _list_model(model=models.Domain, project_id=project_id)
 
     return res
 
 
-def list_subscribers():
+def list_subscribers(project_id):
     """Retrieve a list of subscribers."""
-    res = _list_model(model=models.Subscriber)
+    res = _list_model(model=models.Subscriber, project_id=project_id)
 
     return res
 

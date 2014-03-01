@@ -64,7 +64,8 @@ class SubscribersController(rest.RestController):
     @wsme_pecan.wsexpose([Subscriber])
     def get_all(self):
         """Retrieve a list of subscribers."""
-        res = pecan.request.db_api.list_subscribers()
+        project_id = pecan.request.headers.get('X-Tenant-Id')
+        res = pecan.request.db_api.list_subscribers(project_id=project_id)
 
         return res
 

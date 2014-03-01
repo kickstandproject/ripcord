@@ -43,7 +43,7 @@ class TestCase(base.FunctionalTest):
             project_id=row['project_id'], email=row['email_address'],
             rpid=row['rpid'])
 
-        res = self.db_api.list_subscribers()
+        res = self.db_api.list_subscribers(project_id=row['project_id'])
 
         self.assertEqual(len(res), 1)
 

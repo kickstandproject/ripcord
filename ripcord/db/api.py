@@ -56,12 +56,12 @@ def get_subscriber(uuid):
     return IMPL.get_subscriber(uuid=uuid)
 
 
-def list_domains():
-    return IMPL.list_domains()
+def list_domains(project_id):
+    return IMPL.list_domains(project_id=project_id)
 
 
-def list_subscribers():
-    return IMPL.list_subscribers()
+def list_subscribers(project_id):
+    return IMPL.list_subscribers(project_id=project_id)
 
 
 def update_domain(uuid, name=None, project_id=None, user_id=None):

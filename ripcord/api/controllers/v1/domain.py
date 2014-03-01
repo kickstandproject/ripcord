@@ -56,8 +56,9 @@ class DomainsController(rest.RestController):
 
     @wsme_pecan.wsexpose([Domain])
     def get_all(self):
-        """Retrieve a list of domain."""
-        res = pecan.request.db_api.list_domains()
+        """Retrieve a list of domains."""
+        project_id = pecan.request.headers.get('X-Tenant-Id')
+        res = pecan.request.db_api.list_domains(project_id=project_id)
 
         return res
 
