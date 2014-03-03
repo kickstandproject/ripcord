@@ -177,10 +177,13 @@ class TestRipcordMigrations(test_migrations.BaseMigrationTestCase,
         data = {
             'email_address': 'alice@example.org',
             'domain': 'example.org',
-            'ha1': 'foo',
-            'ha1b': 'bar',
+            'ha1': '84ed3e3a76703c1044da21c8609334a2',
+            'ha1b': '2dc0ac0e03670d8474db6b1e62df8fd1',
             'password': 'foobar',
+            'project_id': 'project1',
+            'user_id': 'user1',
             'username': 'alice',
+            'uuid': '5aedf7195c084e7a9ee0890cab045996',
         }
         table = db_utils.get_table(engine, 'subscribers')
         engine.execute(table.insert(), data)
