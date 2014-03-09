@@ -133,8 +133,8 @@ Refer to HowToContribute_ for information.
 The Kickstand Project uses the Gerrit code review system. For information on how to submit
 your branch to Gerrit, see GerritWorkflow_.
 
-.. _GerritWorkflow: http://wiki.kickstandproject.org/GerritWorkflow
-.. _HowToContribute: http://wiki.kickstandproject.org/HowToContribute
+.. _GerritWorkflow: http://wiki.kickstand-project.org/GerritWorkflow
+.. _HowToContribute: http://wiki.kickstand-project.org/HowToContribute
 
 .. rubric:: Footnotes
 
