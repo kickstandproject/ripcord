@@ -21,10 +21,10 @@ Setting Up a Development Environment
 
 .. note::
 
-  This document originates from the OpenStack Nova project. Since we also use
-  the same toolset for testing, we can also use some of their documentaion. We
-  have obviously made changes that only affect our project but we credit the
-  OpenStack project for the original [#f1]_.
+  This document's look and feel originates from the OpenStack Nova project. Since 
+  we also use a similar toolset for testing, we can also use some of their 
+  documentaion. We have obviously made changes that only affect our project 
+  but we credit the OpenStack project for the original [#f1]_.
 
 This page describes how to setup a working Python development
 environment that can be used in developing ripcord on Ubuntu. These
@@ -53,47 +53,67 @@ Install the prerequisite packages.
 
 On Ubuntu Precise (12.04)::
 
-  sudo apt-get install python-dev python-pip git-core redis-server
+  $ sudo apt-get install python-dev python-pip git-core libffi-dev libxml2-dev libxslt1-dev libmysqlclient-dev libssl-dev
 
 
 Getting the code
 ----------------
 Grab the code from GitHub::
 
-  git clone https://github.com/kickstandproject/ripcord.git
-  cd ripcord
+  $ git clone https://github.com/kickstandproject/ripcord.git
+  $ cd ripcord
 
 
-Installing and using the virtualenv
------------------------------------
+Installing the proper version of tox
+------------------------------------
 
-To install the virtual environment you simply run the following::
+This project uses ``tox`` to automatically download and install any
+necessary project dependencies.  If you haven't previously done so, you will
+need to install version 1.6.1 of ``tox``. ::
 
-  python tools/install_venv.py
+  $ pip install tox==1.6.1 --user
 
-This will install all of the Python packages listed in the
-``requirements.txt`` file into your virtualenv. There will also be some
-additional packages (pip, distribute, greenlet) that are installed
-by the ``tools/install_venv.py`` file into the virutalenv.
+This command installs ``tox`` version 1.6.1 in the ``.local/bin`` subdirectory
+of your home directory.
 
-If all goes well, you should get a message something like this::
+Using tox to satisfy dependencies and run tests
+------------------------------------------------
 
-  Ripcord development environment setup is complete.
+Next, we will use ``tox`` to download the project dependencies and
+run a series of tests on the code, to ensure it's working properly.  Please
+make sure that you're still in the ``ripcord`` directory, and run::
 
-  Ripcord development uses virtualenv to track and manage Python dependencies
-  while in development and testing.
+  $ ~/.local/bin/tox -v
 
-  To activate the Ripcord virtualenv for the extent of your current shell
-  session you can run:
+After a few minutes, if everything goes successfully, you should see a message
+similar to this::
 
-  $ source .venv/bin/activate
+  _____________________________________ summary _____________________________________
+    docs: commands succeeded
+    py27: commands succeeded
+    pep8: commands succeeded
+    congratulations :)
 
-  Or, if you prefer, you can run commands in the virtualenv on a case by case
-  basis by running:
+Ripcord development uses tox as a wrapper around virtualenv to track and 
+manage Python dependencies while in development and testing.
 
-  $ tools/with_venv.sh <your command>
+To activate the Ripcord virtualenv for the extent of your current shell
+session you can run::
 
-  Also, make test will automatically use the virtualenv.
+  $ source .tox/py27/bin/activate
+
+To deactivate the virtualenv sandbox and return to your regular shell, type::
+
+  $ deactivate
+
+Or, if you prefer, you can run commands in the virtualenv on a case by case
+basis by running the following (substituting your actual command instead of
+``echo hello``)::
+
+  $ ~/.local/bin/tox -evenv -- echo hello
+
+Also, please note that ``make test`` will automatically use the virtualenv
+sandbox.
 
 
 Running unit tests
@@ -101,18 +121,16 @@ Running unit tests
 The unit tests will run by default inside tox env in the ``.tox``
 directory. Run the unit tests by doing::
 
-    tox
+  $ ~/.local/bin/tox
 
 See :doc:`unit.tests` for more details.
-
-.. _virtualenv:
 
 Contributing Your Work
 ----------------------
 
 Once your work is complete you may wish to contribute it to the project.
 Refer to HowToContribute_ for information.
-Nova uses the Gerrit code review system. For information on how to submit
+The Kickstand Project uses the Gerrit code review system. For information on how to submit
 your branch to Gerrit, see GerritWorkflow_.
 
 .. _GerritWorkflow: http://wiki.kickstandproject.org/GerritWorkflow
