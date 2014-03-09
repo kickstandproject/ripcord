@@ -84,8 +84,8 @@ def downgrade(migrate_engine):
         migrate_engine, 'subscribers', 'uniq_subscriber0username0domain_id',
         'username', 'domain_id')
 
-    d = Column('domain', String(length=64), nullable=False)
-    subscribers.create_column(d)
+    d = Column('domain', String(length=64), nullable=True)
+    d.create(subscribers)
 
     UniqueConstraint(
         'username', 'domain', table=subscribers,
@@ -100,4 +100,5 @@ def downgrade(migrate_engine):
             where(subscribers.c.project_id == domain.project_id).\
             values(domain=domain.name).execute()
 
+    subscribers.c.domain.alter(nullable=False)
     subscribers.drop_column('domain_id')

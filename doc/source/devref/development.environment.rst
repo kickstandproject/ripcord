@@ -53,7 +53,7 @@ Install the prerequisite packages.
 
 On Ubuntu Precise (12.04)::
 
-  $ sudo apt-get install python-dev python-pip git-core libffi-dev libxml2-dev libxslt1-dev libmysqlclient-dev libssl-dev
+  $ sudo apt-get install python-dev python-pip git-core libffi-dev libxml2-dev libxslt1-dev libmysqlclient-dev libssl-dev libpq-dev
 
 
 Getting the code
