@@ -85,8 +85,9 @@ make sure that you're still in the ``ripcord`` directory, and run::
 
   $ ~/.local/bin/tox -v
 
-After a few minutes, if everything goes successfully, you should see a message
-similar to this::
+We've added the ``-v`` parameter to make ``tox`` be a little more verbose about
+its progress.  After a few minutes, if everything goes successfully, you should
+see a message similar to this::
 
   _____________________________________ summary _____________________________________
     docs: commands succeeded
@@ -94,32 +95,118 @@ similar to this::
     pep8: commands succeeded
     congratulations :)
 
-Ripcord development uses tox as a wrapper around virtualenv to track and 
-manage Python dependencies while in development and testing.
+.. sidebar:: Using tox for virtual environments
 
-To activate the Ripcord virtualenv for the extent of your current shell
-session you can run::
+   Ripcord development uses tox as a wrapper around virtualenv to track and
+   manage Python dependencies while in development and testing.
+
+   To activate the Ripcord virtualenv for the extent of your current shell
+   session you can run::
+
+     $ source .tox/py27/bin/activate
+
+   To deactivate the virtualenv sandbox and return to your regular shell, type::
+
+     $ deactivate
+
+   Or, if you prefer, you can run commands in the virtualenv on a case by case
+   basis by running the following (substituting your actual command instead of
+   ``echo hello``)::
+
+     $ ~/.local/bin/tox -evenv -- echo hello
+
+   Also, please note that ``make test`` will automatically use the virtualenv
+   sandbox.
+
+Setting up Ripcord
+------------------
+With Ripcord installed and passing tests, it's time to start configuring it.  To
+begin, we'll activate the Ripcord virtual environment::
 
   $ source .tox/py27/bin/activate
 
-To deactivate the virtualenv sandbox and return to your regular shell, type::
+Once inside the virtual environment, you should notice that your shell prompt
+has changed to indicate that you're inside the virtual environment.
 
-  $ deactivate
+Next, let's sync the Ripcord database::
 
-Or, if you prefer, you can run commands in the virtualenv on a case by case
-basis by running the following (substituting your actual command instead of
-``echo hello``)::
+  $ ripcord-manage db-sync
 
-  $ ~/.local/bin/tox -evenv -- echo hello
+After that, we can start configuring Ripcord.  Initially, we'll copy the sample
+configuration file to ``ripcord.conf``::
 
-Also, please note that ``make test`` will automatically use the virtualenv
-sandbox.
+  $ cp etc/ripcord/ripcord.conf.sample etc/ripcord/ripcord.conf
 
+Now we can edit the ``ripcord.conf`` file.  When you first get started with
+developing for Ripcord, it's useful to disable the authentication.  Of course,
+you'll want to re-enable authentication before using Ripcord in a production
+environment.  To disable authentication, edit the ``etc/ripcord/ripcord.conf``
+configuration file, find the line that says ``#auth_strategy=keystone``. and change it to::
+
+  auth_strategy=noauth
+
+
+.. note::
+
+  Please note that the ``auth_strategy`` line was commented out in the
+  configuration file, but that when you change it to ``noauth``, you'll
+  need to make sure it doesn't begin with a ``#`` symbol.  Also, please
+  remember to turn authentication back on before running Ripcord in a
+  production environment.
+
+Now that we've configured Ripcord, we can start it.  When starting the program,
+it blocks the current terminal, so we recommend running it inside of a ``screen``
+session.  (If you're not familiar with ``screen``, it's a screen multiplexor that
+allows you to run more than one program from a single terminal window.)  Let's
+start Ripcord in a screen window::
+
+  $ screen ripcord-api --config-file=etc/ripcord/ripcord.conf -v
+
+If Ripcord has started correctly, you should see something like this at the bottom of your terminal window::
+
+  2014-03-10 18:14:49.465 7373 INFO ripcord.cmd.api [-] ********************************************************************************
+
+Since that terminal window is busy showing us the logs from Ripcord, let's use
+``screen`` to create a second virtual terminal window, and do a quick double-check
+to make sure Ripcord is listening for network connections.
+
+Simply press ``CTRL-A`` and then ``C`` to create a new virtual terminal window in
+screen.  This should give you another shell prompt.  You can then press ``CTRL-A`` and then ``N`` to cycle between the two virtual terminals.
+
+In the new virtual terminal window, run the following to ensure that Ripcord is
+listening for network connections::
+
+  $ netstat --ltnp
+
+You should see a line in the output like the following, showing that our python
+program (Ripcord in this instance) is listening for network connections on port
+``9869``::
+
+  tcp        0      0 0.0.0.0:9869            0.0.0.0:*               LISTEN      7373/python2.7
+
+Once you've confirmed that Ripcord is listening for network connections, you can
+connect to Ripcord by opening a web browser and entering ``http://127.0.0.1:9869``
+in the address bar and pressing enter.
+
+You should get back an response that shows something similar to ::
+
+  404 Not Found
+  The resource could not be found.
+
+This is the expected response at this time.  At this point, you're ready to
+install the Ripcord command-line client.
+
+To leave Ripcord running in the background and disconnect from the screen session,
+type ``CTRL-A`` and then ``D``.  You can later reconnect to your screen session by
+typing::
+
+  $ screen -x
 
 Running unit tests
 ------------------
-The unit tests will run by default inside tox env in the ``.tox``
-directory. Run the unit tests by doing::
+The unit tests will run by default inside the ``tox`` environment in the ``.tox``
+directory. Run the unit tests by running the following command in the ``ripcord``
+directory::
 
   $ ~/.local/bin/tox
 
