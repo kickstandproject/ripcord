@@ -32,6 +32,7 @@ LOG = logging.getLogger(__name__)
 class Domain(base.APIBase):
     """API representation of a domain."""
 
+    disabled = bool
     name = wtypes.text
     project_id = wtypes.text
     user_id = wtypes.text
@@ -83,7 +84,8 @@ class DomainsController(rest.RestController):
             d = body.as_dict()
 
             res = pecan.request.db_api.create_domain(
-                name=d['name'], user_id=user_id, project_id=project_id)
+                name=d['name'], disabled=d['disabled'],
+                user_id=user_id, project_id=project_id)
         except exception.DomainAlreadyExists as e:
             raise wsme.exc.ClientSideError(e.message, status_code=e.code)
 
@@ -100,8 +102,8 @@ class DomainsController(rest.RestController):
             d = body.as_dict()
 
             res = pecan.request.db_api.update_domain(
-                uuid=uuid, name=d['name'], user_id=user_id,
-                project_id=project_id)
+                uuid=uuid, name=d['name'], disabled=d['disabled'],
+                user_id=user_id, project_id=project_id)
         except exception.DomainNotFound as e:
             raise wsme.exc.ClientSideError(e.message, status_code=e.code)
 

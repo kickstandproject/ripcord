@@ -24,6 +24,7 @@ class TestCase(base.FunctionalTest):
 
     def test_success(self):
         row = {
+            'disabled': False,
             'name': 'example.org',
             'id': 1,
             'project_id': '793491dd5fa8477eb2d6a820193a183b',

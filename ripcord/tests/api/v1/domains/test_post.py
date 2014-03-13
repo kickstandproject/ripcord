@@ -22,12 +22,14 @@ class TestCase(base.FunctionalTest):
 
     def test_all_fields(self):
         json = {
+            'disabled': True,
             'name': 'example.org',
             'project_id': '793491dd5fa8477eb2d6a820193a183b',
             'updated_at': None,
             'user_id': '02d99a62af974b26b510c3564ba84644',
         }
         params = {
+            'disabled': json['disabled'],
             'name': json['name'],
         }
         headers = {

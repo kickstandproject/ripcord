@@ -30,12 +30,14 @@ class TestCase(base.FunctionalTest):
 
     def test_all_fields(self):
         json = {
+            'disabled': True,
             'name': 'example.org',
             'project_id': '793491dd5fa8477eb2d6a820193a183b',
             'updated_at': None,
             'user_id': '02d99a62af974b26b510c3564ba84644',
         }
         params = {
+            'disabled': json['disabled'],
             'name': json['name'],
         }
         headers = {
@@ -48,11 +50,13 @@ class TestCase(base.FunctionalTest):
         self.assertTrue(uuidutils.is_uuid_like(tmp.json['uuid']))
 
         json = {
+            'disabled': True,
             'name': 'example.org',
             'project_id': '09f07543-6dad-441b-acbf-1c61b5f4015e',
             'user_id': '5fccabbb-9d65-417f-8b0b-a2fc77b501e6',
         }
         params = {
+            'disabled': json['disabled'],
             'name': json['name'],
         }
         headers = {
@@ -76,6 +80,7 @@ class TestCase(base.FunctionalTest):
 
     def test_no_fields(self):
         json = {
+            'disabled': False,
             'name': 'example.org',
             'project_id': '5fccabbb-9d65-417f-8b0b-a2fc77b501e6',
             'updated_at': None,

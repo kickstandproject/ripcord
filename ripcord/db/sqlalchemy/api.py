@@ -52,9 +52,10 @@ def model_query(model, *args, **kwargs):
     return query
 
 
-def create_domain(name, project_id, user_id):
+def create_domain(name, project_id, user_id, disabled=False):
     """Create a new domain."""
     values = {
+        'disabled': disabled,
         'name': name,
         'project_id': project_id,
         'user_id': user_id,
@@ -158,10 +159,12 @@ def list_subscribers(project_id):
 
 
 def update_domain(
-        uuid, name=None, project_id=None, user_id=None):
+        uuid, name=None, disabled=None, project_id=None, user_id=None):
     """Update an existing domain."""
     res = get_domain(uuid=uuid)
 
+    if disabled is not None:
+        res['disabled'] = disabled
     if name is not None:
         res['name'] = name
     if project_id is not None:

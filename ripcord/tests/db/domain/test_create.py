@@ -25,6 +25,7 @@ class TestCase(base.FunctionalTest):
 
     def test_all_fields(self):
         row = {
+            'disabled': True,
             'id': 1,
             'name': 'example.org',
             'project_id': '793491dd5fa8477eb2d6a820193a183b',
@@ -32,8 +33,8 @@ class TestCase(base.FunctionalTest):
             'user_id': '02d99a62af974b26b510c3564ba84644',
         }
         res = self.db_api.create_domain(
-            name=row['name'], project_id=row['project_id'],
-            user_id=row['user_id'])
+            name=row['name'], disabled=row['disabled'],
+            project_id=row['project_id'], user_id=row['user_id'])
 
         for k, v in row.iteritems():
             self.assertEqual(res[k], v)
@@ -47,14 +48,15 @@ class TestCase(base.FunctionalTest):
 
     def test_domain_already_exists(self):
         row = {
+            'disabled': False,
             'name': 'example.org',
             'project_id': '793491dd5fa8477eb2d6a820193a183b',
             'updated_at': None,
             'user_id': '02d99a62af974b26b510c3564ba84644',
         }
         res = self.db_api.create_domain(
-            name=row['name'], project_id=row['project_id'],
-            user_id=row['user_id'])
+            name=row['name'], disabled=row['disabled'],
+            project_id=row['project_id'], user_id=row['user_id'])
         self.assertTrue(res)
         self.assertRaises(
             exception.DomainAlreadyExists,
