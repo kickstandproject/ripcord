@@ -40,6 +40,7 @@ class Domain(Base):
         schema.UniqueConstraint('name', name='uniq_domain0name'))
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    disabled = Column(Boolean, default=False)
     name = Column(String(64), nullable=False, default='')
     project_id = Column(String(255))
     user_id = Column(String(255))

@@ -341,3 +341,14 @@ class TestRipcordMigrations(test_migrations.BaseMigrationTestCase,
             username='alice')
 
         self.assertRaises(exc.IntegrityError, insert.execute, data)
+
+    def _check_007(self, engine, data):
+        self.assertColumnExists(engine, 'domains', 'disabled')
+        table = db_utils.get_table(engine, 'domains')
+
+        domains = table.select(
+            table.c.disabled != True).execute().fetchall()  #flake8: noqa
+        self.assertEqual(len(domains), 1)
+
+    def _post_downgrade_007(self, engine):
+        self.assertColumnNotExists(engine, 'domains', 'disabled')

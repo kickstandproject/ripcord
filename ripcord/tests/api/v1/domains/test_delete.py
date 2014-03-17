@@ -29,13 +29,15 @@ class TestCase(base.FunctionalTest):
 
     def test_success(self):
         json = {
+            'disabled': False,
             'name': 'example.org',
             'project_id': '793491dd5fa8477eb2d6a820193a183b',
             'updated_at': None,
             'user_id': '02d99a62af974b26b510c3564ba84644',
         }
         params = {
-            'name': json['name'],
+            'disabled': json['disabled'],
+            'name': json['name']
         }
         headers = {
             'X-User-Id': json['user_id'],

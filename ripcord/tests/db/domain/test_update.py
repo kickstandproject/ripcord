@@ -31,6 +31,7 @@ class TestCase(base.FunctionalTest):
 
     def test_all_fields(self):
         row = {
+            'disabled': True,
             'name': 'example.org',
             'id': 1,
             'project_id': '793491dd5fa8477eb2d6a820193a183b',
@@ -38,19 +39,20 @@ class TestCase(base.FunctionalTest):
             'user_id': '02d99a62af974b26b510c3564ba84644',
         }
         tmp = self.db_api.create_domain(
-            name=row['name'], project_id=row['project_id'],
-            user_id=row['user_id'])
+            name=row['name'], disabled=row['disabled'],
+            project_id=row['project_id'], user_id=row['user_id'])
         self.assertTrue(uuidutils.is_uuid_like(tmp['uuid']))
 
         row = {
+            'disabled': False,
             'name': 'example.net',
             'id': 1,
             'project_id': '02d99a62af974b26b510c3564ba84644',
             'user_id': '793491dd5fa8477eb2d6a820193a183b',
         }
         res = self.db_api.update_domain(
-            uuid=tmp['uuid'], name=row['name'], project_id=row['project_id'],
-            user_id=row['user_id'])
+            uuid=tmp['uuid'], name=row['name'], disabled=row['disabled'],
+            project_id=row['project_id'], user_id=row['user_id'])
 
         for k, v in row.iteritems():
             self.assertEqual(res[k], v)
@@ -65,6 +67,7 @@ class TestCase(base.FunctionalTest):
 
     def test_no_fields(self):
         row = {
+            'disabled': False,
             'name': 'example.org',
             'id': 1,
             'project_id': '793491dd5fa8477eb2d6a820193a183b',
@@ -72,8 +75,8 @@ class TestCase(base.FunctionalTest):
             'user_id': '02d99a62af974b26b510c3564ba84644',
         }
         tmp = self.db_api.create_domain(
-            name=row['name'], project_id=row['project_id'],
-            user_id=row['user_id'])
+            name=row['name'], disabled=row['disabled'],
+            project_id=row['project_id'], user_id=row['user_id'])
         self.assertTrue(uuidutils.is_uuid_like(tmp['uuid']))
 
         res = self.db_api.update_domain(uuid=tmp['uuid'])
