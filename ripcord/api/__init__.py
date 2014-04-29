@@ -13,3 +13,33 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+from oslo.config import cfg
+
+# Register options for the service
+API_SERVICE_OPTS = [
+    cfg.IntOpt('port',
+               default=9869,
+               deprecated_name='bind_port',
+               deprecated_group='DEFAULT',
+               help='The port for the ripcord API server.',
+               ),
+    cfg.StrOpt('host',
+               default='0.0.0.0',
+               deprecated_name='bind_host',
+               deprecated_group='DEFAULT',
+               help='The listen IP for the ripcord API server.',
+               ),
+    cfg.BoolOpt('enable_reverse_dns_lookup',
+                default=False,
+                help=('Set it to False if your environment does not need '
+                      'or have dns server, otherwise it will delay the '
+                      'response from api.')
+                ),
+]
+
+CONF = cfg.CONF
+opt_group = cfg.OptGroup(name='api',
+                         title='Options for the ripcord-api service')
+CONF.register_group(opt_group)
+CONF.register_opts(API_SERVICE_OPTS, opt_group)

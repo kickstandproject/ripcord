@@ -1,7 +1,7 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
-# Copyright 2013 Hewlett-Packard Development Company, L.P.
-# Copyright (C) 2013 PolyBeacon, Inc.
+# Copyright (C) 2012-2014 Julien Danjou
+# Copyright (C) 2013-2014 PolyBeacon, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,34 +19,14 @@
 Ripcord Service API
 """
 
-import logging
-
-from oslo.config import cfg
-from wsgiref import simple_server
-
 from ripcord.api import app
-from ripcord.common import config
+from ripcord.common import service
 from ripcord.openstack.common import log
-
-CONF = cfg.CONF
 
 LOG = log.getLogger(__name__)
 
 
 def main():
-    config.parse_args()
-    log.setup('ripcord')
-    host = CONF.bind_host
-    port = CONF.bind_port
-    wsgi = simple_server.make_server(
-        host, port, app.VersionSelectorApplication()
-    )
-
-    LOG.info('Serving on http://%s:%s' % (host, port))
-    LOG.info('Configuration:')
-    CONF.log_opt_values(LOG, logging.INFO)
-
-    try:
-        wsgi.serve_forever()
-    except KeyboardInterrupt:
-        pass
+    service.prepare_service()
+    srv = app.build_server()
+    srv.serve_forever()
