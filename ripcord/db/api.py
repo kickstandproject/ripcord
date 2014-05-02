@@ -34,12 +34,12 @@ def create_domain(name, project_id, user_id, disabled=False):
 
 
 def create_subscriber(
-        username, domain_id, password, user_id, project_id, disabled=False,
-        email='', rpid=''):
+        username, domain_id, password, user_id, project_id, description='',
+        disabled=False, email='', rpid=''):
     return IMPL.create_subscriber(
         username=username, domain_id=domain_id, password=password,
-        user_id=user_id, project_id=project_id, disabled=disabled,
-        email=email, rpid=rpid)
+        user_id=user_id, project_id=project_id, description=description,
+        disabled=disabled, email=email, rpid=rpid)
 
 
 def delete_domain(uuid):
@@ -74,12 +74,13 @@ def update_domain(
 
 
 def update_subscriber(
-        uuid, disabled=None, domain_id=None, email=None, password=None,
-        project_id=None, rpid=None, user_id=None, username=None):
+        uuid, description=None, disabled=None, domain_id=None, email=None,
+        password=None, project_id=None, rpid=None, user_id=None,
+        username=None):
     return IMPL.update_subscriber(
-        uuid, disabled=disabled, domain_id=domain_id, email=email,
-        password=password, project_id=project_id, rpid=rpid, user_id=user_id,
-        username=username)
+        uuid, description=description, disabled=disabled, domain_id=domain_id,
+        email=email, password=password, project_id=project_id, rpid=rpid,
+        user_id=user_id, username=username)
 
 
 def get_default_quota_class():

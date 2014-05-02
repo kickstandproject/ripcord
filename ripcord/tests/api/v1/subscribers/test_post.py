@@ -43,6 +43,7 @@ class TestCase(base.FunctionalTest):
 
     def test_all_fields(self):
         json = {
+            'description': 'a subscriber',
             'disabled': True,
             'domain_id': self.domain_id,
             'email_address': 'alice@example.org',
@@ -57,6 +58,7 @@ class TestCase(base.FunctionalTest):
         }
 
         params = {
+            'description': json['description'],
             'disabled': json['disabled'],
             'domain_id': json['domain_id'],
             'email_address': json['email_address'],

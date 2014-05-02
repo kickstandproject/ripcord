@@ -93,6 +93,7 @@ class Subscriber(Base):
             name='uniq_subscriber0username0domain_id'),)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    description = Column(String(255), default='')
     disabled = Column(Boolean, default=False)
     domain_id = Column(String(255), ForeignKey('domains.uuid'))
     email_address = Column(String(64), nullable=False, default='')

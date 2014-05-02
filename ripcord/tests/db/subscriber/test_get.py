@@ -43,6 +43,7 @@ class TestCase(base.FunctionalTest):
 
     def test_success(self):
         row = {
+            'description': 'a subscriber',
             'disabled': False,
             'domain_id': self.domain_id,
             'email_address': 'alice@example.org',
@@ -59,7 +60,8 @@ class TestCase(base.FunctionalTest):
         tmp = self.db_api.create_subscriber(
             username=row['username'], domain_id=row['domain_id'],
             password=row['password'], user_id=row['user_id'],
-            project_id=row['project_id'], email=row['email_address'],
+            project_id=row['project_id'], description=row['description'],
+            disabled=row['disabled'], email=row['email_address'],
             rpid=row['rpid'])
 
         res = self.db_api.get_subscriber(

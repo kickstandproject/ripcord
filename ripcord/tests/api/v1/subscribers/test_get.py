@@ -42,6 +42,7 @@ class TestCase(base.FunctionalTest):
         self.assertTrue(uuidutils.is_uuid_like(self.domain_id))
 
         json = {
+            'description': 'a subscriber',
             'disabled': False,
             'domain_id': self.domain_id,
             'email_address': 'bob@example.org',
@@ -52,6 +53,7 @@ class TestCase(base.FunctionalTest):
             'username': 'bob',
         }
         params = {
+            'description': json['description'],
             'disabled': json['disabled'],
             'domain_id': json['domain_id'],
             'email_address': json['email_address'],
@@ -73,6 +75,7 @@ class TestCase(base.FunctionalTest):
 
     def test_get_one_success(self):
         json = {
+            'description': 'a subscriber',
             'disabled': False,
             'domain_id': self.domain_id,
             'email_address': 'alice@example.org',
@@ -86,6 +89,7 @@ class TestCase(base.FunctionalTest):
             'username': 'alice',
         }
         params = {
+            'description': json['description'],
             'disabled': json['disabled'],
             'domain_id': json['domain_id'],
             'email_address': json['email_address'],
@@ -126,6 +130,7 @@ class TestCase(base.FunctionalTest):
             '/domains', params=params, status=200, headers=headers)
 
         json = {
+            'description': 'a subscriber',
             'disabled': False,
             'domain_id': res.json['uuid'],
             'email_address': 'alice@example.net',
@@ -139,6 +144,7 @@ class TestCase(base.FunctionalTest):
             'username': 'alice',
         }
         params = {
+            'description': json['description'],
             'disabled': json['disabled'],
             'domain_id': json['domain_id'],
             'email_address': json['email_address'],

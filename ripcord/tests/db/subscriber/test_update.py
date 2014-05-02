@@ -68,6 +68,7 @@ class TestCase(base.FunctionalTest):
             user_id=self.user_id)
 
         row = {
+            'description': 'a subscriber',
             'disabled': True,
             'domain_id': domain['uuid'],
             'email_address': 'bob@example.net',
@@ -84,8 +85,8 @@ class TestCase(base.FunctionalTest):
             uuid=tmp['uuid'], username=row['username'],
             domain_id=row['domain_id'], password=row['password'],
             user_id=row['user_id'], project_id=row['project_id'],
-            disabled=row['disabled'], email=row['email_address'],
-            rpid=row['rpid'])
+            description=row['description'], disabled=row['disabled'],
+            email=row['email_address'], rpid=row['rpid'])
 
         for k, v in row.iteritems():
             self.assertEqual(res[k], v)
@@ -100,6 +101,7 @@ class TestCase(base.FunctionalTest):
 
     def test_no_fields(self):
         row = {
+            'description': '',
             'disabled': False,
             'domain_id': self.domain_id,
             'email_address': '',
@@ -116,8 +118,9 @@ class TestCase(base.FunctionalTest):
         tmp = self.db_api.create_subscriber(
             username=row['username'], domain_id=row['domain_id'],
             password=row['password'], user_id=row['user_id'],
-            project_id=row['project_id'], disabled=row['disabled'],
-            email=row['email_address'], rpid=row['rpid'])
+            project_id=row['project_id'], description=row['description'],
+            disabled=row['disabled'], email=row['email_address'],
+            rpid=row['rpid'])
         self.assertTrue(uuidutils.is_uuid_like(tmp['uuid']))
 
         res = self.db_api.update_subscriber(uuid=tmp['uuid'])

@@ -72,13 +72,14 @@ def create_domain(name, project_id, user_id, disabled=False):
 
 
 def create_subscriber(
-        username, domain_id, password, user_id, project_id, disabled=False,
-        email='', rpid=''):
+        username, domain_id, password, user_id, project_id, description='',
+        disabled=False, email='', rpid=''):
     """Create a new subscriber."""
 
     model = get_domain(uuid=domain_id)
 
     values = {
+        'description': description,
         'disabled': disabled,
         'domain_id': domain_id,
         'email_address': email,
@@ -178,11 +179,14 @@ def update_domain(
 
 
 def update_subscriber(
-        uuid, disabled=None, domain_id=None, email=None, password=None,
-        project_id=None, rpid=None, user_id=None, username=None):
+        uuid, description=None, disabled=None, domain_id=None, email=None,
+        password=None, project_id=None, rpid=None, user_id=None,
+        username=None):
     """Update an existing subscriber."""
     res = get_subscriber(uuid=uuid)
 
+    if description is not None:
+        res['description'] = description
     if disabled is not None:
         res['disabled'] = disabled
     if domain_id is not None:

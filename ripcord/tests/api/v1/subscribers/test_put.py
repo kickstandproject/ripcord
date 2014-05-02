@@ -51,6 +51,7 @@ class TestCase(base.FunctionalTest):
 
     def test_all_fields(self):
         json = {
+            'description': 'a subscriber',
             'disabled': True,
             'domain_id': self.domain_id,
             'email_address': '',
@@ -64,6 +65,7 @@ class TestCase(base.FunctionalTest):
             'username': 'alice',
         }
         params = {
+            'description': json['description'],
             'disabled': json['disabled'],
             'domain_id': json['domain_id'],
             'email_address': json['email_address'],
@@ -83,6 +85,7 @@ class TestCase(base.FunctionalTest):
             '/domains', params=params, status=200, headers=self.headers)
 
         json = {
+            'description': 'a subscriber',
             'disabled': False,
             'domain_id': domain.json['uuid'],
             'email_address': 'bob@example.net',
@@ -95,6 +98,7 @@ class TestCase(base.FunctionalTest):
             'username': 'bob',
         }
         params = {
+            'description': json['description'],
             'disabled': json['disabled'],
             'domain_id': json['domain_id'],
             'email_address': json['email_address'],
@@ -119,6 +123,7 @@ class TestCase(base.FunctionalTest):
 
     def test_no_fields(self):
         json = {
+            'description': '',
             'disabled': False,
             'domain_id': self.domain_id,
             'email_address': '',
@@ -132,6 +137,7 @@ class TestCase(base.FunctionalTest):
             'username': 'alice',
         }
         params = {
+            'description': json['description'],
             'disabled': json['disabled'],
             'domain_id': json['domain_id'],
             'email_address': json['email_address'],

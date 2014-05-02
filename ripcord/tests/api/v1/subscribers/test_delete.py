@@ -51,6 +51,7 @@ class TestCase(base.FunctionalTest):
 
     def test_success(self):
         json = {
+            'description': 'a subscriber',
             'domain_id': self.domain_id,
             'email_address': 'alice@example.org',
             'password': 'foobar',
@@ -61,6 +62,7 @@ class TestCase(base.FunctionalTest):
         }
 
         params = {
+            'description': json['description'],
             'domain_id': json['domain_id'],
             'email_address': json['email_address'],
             'password': json['password'],

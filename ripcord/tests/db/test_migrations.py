@@ -352,3 +352,17 @@ class TestRipcordMigrations(test_migrations.BaseMigrationTestCase,
 
     def _post_downgrade_007(self, engine):
         self.assertColumnNotExists(engine, 'domains', 'disabled')
+
+    def _check_008(self, engine, data):
+        self.assertColumnExists(engine, 'subscribers', 'description')
+        table = db_utils.get_table(engine, 'subscribers')
+
+        self.assertIsInstance(
+            table.c.description.type, sqlalchemy.types.String)
+
+        subscribers = table.select().where(
+            table.c.description == '').execute().fetchall()  #flake8: noqa
+        self.assertEqual(len(subscribers), 1)
+
+    def _post_downgrade_008(self, engine):
+        self.assertColumnNotExists(engine, 'subscribers', 'description')
